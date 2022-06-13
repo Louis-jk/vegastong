@@ -1,0 +1,52 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.dmonster.vegastong">
+
+
+
+  <!-- 카메라 기능 / 사진 업로드 기능을 위한 안드로이드 추가 코드  :: react-native-image-picker 패키지와 연동 -->
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.INTERNET" />
+
+  <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme" android:usesCleartextTraffic="true">
+    <activity android:name=".MainActivity" android:label="@string/app_name" android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode" android:launchMode="singleTask" android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait">
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="vegastong" />
+        <!-- <data android:scheme="https" android:host="dmonster1826.cafe24.com" />
+        <data android:scheme="http" android:host="dmonster1826.cafe24.com" /> -->
+        <!-- dmonster1826.cafe24.com -->
+      </intent-filter>
+    </activity>
+    <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+
+
+    <!-- firbase 푸쉬 기능 연동 -->
+    <!-- <service android:name="io.invertase.firebase.messaging.RNFirebaseMessagingService">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
+    </service>
+    <service android:name="io.invertase.firebase.messaging.RNFirebaseBackgroundMessagingService" /> -->
+    <!--페이스북-->
+    <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+    <activity android:name="com.facebook.FacebookActivity" android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:label="@string/app_name" />
+    <activity android:name="com.facebook.CustomTabActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="@string/fb_login_protocol_scheme" />
+      </intent-filter>
+    </activity>
+    <!-- 카카오링크 -->
+    <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key" />
+    <!-- <meta-data android:name="com.kakao.sdk.AppKey" android:value="@string/kakao_app_key"> -->
+  </application>
+
+</manifest>

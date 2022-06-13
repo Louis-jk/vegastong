@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "678361988884",
+    "project_id": "vegastong-351504",
+    "storage_bucket": "vegastong-351504.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678361988884:android:17e0b35fc528253868cc01",
+        "android_client_info": {
+          "package_name": "com.dmonster.vegastong"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "678361988884-cm0g1bvlouvaijotu88bh09m3rjo3rj4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADDLybZwOr4rr_4rgDyfI1RwEtPDHGjmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "678361988884-cm0g1bvlouvaijotu88bh09m3rjo3rj4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

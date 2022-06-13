@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">베가스통</string>
+    <string name="kakao_app_key">d57bd97f02e430fa5d4879872ecfea5e</string>
+    <string name="kakao_scheme">kakaod57bd97f02e430fa5d4879872ecfea5e</string>
+    <string name="kakaolink_host">kakaolink</string>
+    <string name="facebook_app_id">805822496659797</string>
+    <string name="fb_login_protocol_scheme">fb805822496659797</string>
+</resources>

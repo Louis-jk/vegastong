@@ -1,0 +1,50 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext {
+        buildToolsVersion = "29.0.2"
+        minSdkVersion = 21
+        compileSdkVersion = 29
+        targetSdkVersion = 29
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath('com.android.tools.build:gradle:3.4.2') // 기존 gradle:4.0.1 // 한번 수정건 3.4.2
+        classpath 'com.google.gms:google-services:4.3.3' // firbase 푸쉬 기능 연동
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        
+        google()
+        jcenter()
+        maven { url 'https://www.jitpack.io' }
+
+        // 카카오링크      
+        mavenCentral()
+        maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
+
+    }
+}
+
+subprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'http://devrepo.kakao.com:8088/nexus/content/groups/public/' }
+    }
+}
