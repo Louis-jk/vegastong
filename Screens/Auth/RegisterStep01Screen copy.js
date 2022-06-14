@@ -13,7 +13,7 @@ import Postcode from '@actbase/react-daum-postcode';
 import Modal from 'react-native-modal';
 import Header from '../Common/Header';
 import qs from 'qs';
-import axios from 'axios';
+
 import {useForm} from 'react-hook-form';
 import {
   joinUserId,
@@ -23,8 +23,7 @@ import {
   joinUserAddress,
   joinUserAddressDetail,
 } from '../Module/JoinReducer';
-
-const baseUrl = 'https://dmonster1826.cafe24.com';
+import {VegasPost} from '../../utils/axios.config';
 
 const RegisterStep01Screen = ({navigation, route}) => {
   const title = route.params.title;
@@ -59,20 +58,15 @@ const RegisterStep01Screen = ({navigation, route}) => {
 
   // 본인인증(휴대전화번호) 문자발송 버튼
   const authenticateSMS = () => {
-    axios({
-      method: 'post',
-      url: `${baseUrl}/api/user/auth_sms`,
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-      data: qs.stringify({
+    VegasPost(
+      '/api/user/auth_sms',
+      qs.stringify({
         mobile: userMobile,
       }),
-    })
+    )
       .then((res) => {
-        if (res.data.result == 'success') {
-          setMobileConfirmId(res.data.data.sm_id);
+        if (res.result === 'success') {
+          setMobileConfirmId(res.data.sm_id);
         } else {
           Alert.alert('휴대전화번호를 올바르게 입력해주세요.');
         }
@@ -82,20 +76,15 @@ const RegisterStep01Screen = ({navigation, route}) => {
 
   // 본인인증(휴대전화번호) 인증번호 확인 버튼
   const confirmMobile = () => {
-    axios({
-      method: 'post',
-      url: `${baseUrl}/api/user/confirm_sms`,
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-      data: qs.stringify({
+    VegasPost(
+      '/api/user/confirm_sms',
+      qs.stringify({
         sm_id: mobileConfirmId,
         text: userMobileAuthNum,
       }),
-    })
+    )
       .then((res) => {
-        if (res.data.result == 'success') {
+        if (res.result === 'success') {
           Alert.alert('본인 인증되었습니다.');
           setMobileConfimed(true);
         } else {
@@ -116,15 +105,14 @@ const RegisterStep01Screen = ({navigation, route}) => {
 
   // 아이디 중복체크
   const checkUserId = async () => {
-    await axios({
-      method: 'post',
-      url: `${baseUrl}/api/user/check_user_id`,
-      data: qs.stringify({
+    await VegasPost(
+      '/api/user/check_user_id',
+      qs.stringify({
         ut_user_id: userId,
       }),
-    })
+    )
       .then((res) =>
-        res.data.result == 'success'
+        res.result === 'success'
           ? Alert.alert('사용 가능한 아이디입니다.')
           : IdAlertMsg(),
       )
@@ -146,15 +134,14 @@ const RegisterStep01Screen = ({navigation, route}) => {
 
   // 닉네임 중복 체크
   const checkUserNick = async () => {
-    await axios({
-      method: 'post',
-      url: `${baseUrl}/api/user/check_nickname`,
-      data: qs.stringify({
+    VegasPost(
+      '/api/user/check_nickname',
+      qs.stringify({
         ut_nickname: userNick,
       }),
-    })
+    )
       .then((res) =>
-        res.data.result == 'success'
+        res.result === 'success'
           ? Alert.alert('사용 가능한 닉네임입니다.')
           : PwAlertMsg(),
       )

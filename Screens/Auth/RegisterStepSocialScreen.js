@@ -14,7 +14,7 @@ import Postcode from '@actbase/react-daum-postcode';
 import Modal from 'react-native-modal';
 import Header from '../Common/Header';
 import qs from 'qs';
-import axios from 'axios';
+
 import {Formik} from 'formik';
 import * as yup from 'yup';
 import {
@@ -26,8 +26,7 @@ import {
   joinUserAddress,
   joinUserAddressDetail,
 } from '../Module/JoinReducer';
-
-const baseUrl = 'https://dmonster1826.cafe24.com';
+import {VegasPost} from '../../utils/axios.config';
 
 const RegisterStepSocialScreen = (props) => {
   const navigation = props.navigation;
@@ -88,20 +87,16 @@ const RegisterStepSocialScreen = (props) => {
           },
         ],
       );
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/auth_sms`,
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+
+      VegasPost(
+        '/api/user/auth_sms',
+        qs.stringify({
           mobile: register_mobile,
         }),
-      })
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
-            setMobileConfirmId(res.data.data.sm_id);
+          if (res.result === 'success') {
+            setMobileConfirmId(res.data.sm_id);
           } else {
             Alert.alert(
               '휴대전화번호를 올바르게 입력해주세요.',
@@ -146,20 +141,15 @@ const RegisterStepSocialScreen = (props) => {
       );
       return false;
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/confirm_sms`,
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      VegasPost(
+        '/api/user/confirm_sms',
+        qs.stringify({
           sm_id: mobileConfirmId,
           text: register_confirmMobile,
         }),
-      })
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
+          if (res.result === 'success') {
             Alert.alert('본인 인증되었습니다.', '다음 단계로 진행해주세요.', [
               {
                 text: '확인',
@@ -202,19 +192,14 @@ const RegisterStepSocialScreen = (props) => {
     if (register_nickname == '') {
       Alert.alert('닉네임을 입력해주세요.');
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/check_nickname`,
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      VegasPost(
+        '/api/user/check_nickname',
+        qs.stringify({
           ut_nickname: register_nickname,
         }),
-      })
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
+          if (res.result === 'success') {
             Alert.alert('사용 가능한 닉네임입니다.');
             setCheckedNick(true);
           } else {

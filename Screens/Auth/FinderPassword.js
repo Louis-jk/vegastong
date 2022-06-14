@@ -1,79 +1,62 @@
-import React, {useState, useRef} from 'react';
+import React, { useState, useRef } from 'react'
 import {
   View,
   Text,
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
-} from 'react-native';
-import {Container, Content, Input, Button} from 'native-base';
-import {useSelector, useDispatch} from 'react-redux';
-import Postcode from '@actbase/react-daum-postcode';
-import Modal from 'react-native-modal';
-import Header from '../Common/Header';
-import qs from 'qs';
-import axios from 'axios';
-import {Formik} from 'formik';
-import * as yup from 'yup';
-import {
-  joinUserId,
-  joinUserNickname,
-  joinUserZipcode,
-  joinUserAddress,
-  joinUserAddressDetail,
-  joinUserSocialType,
-} from '../Module/JoinReducer';
+  Alert
+} from 'react-native'
+import { Container, Content, Input, Button } from 'native-base'
+import { useSelector, useDispatch } from 'react-redux'
+import Postcode from '@actbase/react-daum-postcode'
+import Modal from 'react-native-modal'
+import Header from '../Common/Header'
+import qs from 'qs'
 
-const baseUrl = 'https://dmonster1826.cafe24.com';
+import { Formik } from 'formik'
+import * as yup from 'yup'
+import { VegasPost } from '../../utils/axios.config'
 
-const FinderPassword = ({navigation, route}) => {
-  const title = route.params.title;
-  const type = route.params.type;
-  const Id = route.params.id;
+const FinderPassword = ({ navigation, route }) => {
+  const title = route.params.title
+  const type = route.params.type
+  const Id = route.params.id
 
-  const userIdInput = useRef();
-  const dispatch = useDispatch();
+  const userIdInput = useRef()
+  const dispatch = useDispatch()
 
   // 다음 주소 api 모달 상태관리
-  const [postModalView, setPostModalView] = useState(false);
+  const [postModalView, setPostModalView] = useState(false)
 
   // 회원가입 양식 폼 상태처리
 
-  const [userNick, setUserNickValue] = useState('');
-  const [userMobile, setUserMobileValue] = useState('');
+  const [userNick, setUserNickValue] = useState('')
+  const [userMobile, setUserMobileValue] = useState('')
 
-  const [textInput, setTextInput] = useState('');
-  const [isFocused, setFocus] = useState(false);
+  const [textInput, setTextInput] = useState('')
+  const [isFocused, setFocus] = useState(false)
 
   // 닉네임 체크
-  const [checkedNick, setCheckedNick] = useState(false);
+  const [checkedNick, setCheckedNick] = useState(false)
 
   // 리셋
 
   const onResetNick = () => {
-    setUserNickValue('');
+    setUserNickValue('')
   };
 
   const Find = async () => {
     if (userNick !== '' && userMobile !== '') {
       if (isMobileConfimed !== false) {
-        const form = new FormData();
-        form.append('ut_nickname', userNick);
-        form.append('ut_mobile', userMobile);
-        const headers = {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        };
-        const api = await axios.post(
-          baseUrl + '/api/user/search_password',
-          form,
-          {headers},
-        );
-        console.log('finder id', api);
+        const form = new FormData()
+        form.append('ut_nickname', userNick)
+        form.append('ut_mobile', userMobile)
 
-        if (api.data.result === 'success') {
-          const id = api.data.data.ut_user_id;
+        const res = await VegasPost('/api/user/search_password', form)
+
+        if (res.result === 'success') {
+          const id = res.data.ut_user_id
           Alert.alert(
             '비밀번호 초기화',
             `${userMobile}로 임시 비밀번호가 발송되었습니다.`,
@@ -81,41 +64,41 @@ const FinderPassword = ({navigation, route}) => {
               {
                 text: '확인(홈 이동)',
                 onPress: () => {
-                  navigation.navigate('loading');
-                },
-              },
-            ],
-          );
+                  navigation.navigate('loading')
+                }
+              }
+            ]
+          )
         } else {
-          Alert.alert('비밀번호 초기화', api.data.error);
+          Alert.alert('비밀번호 초기화', res.error)
         }
       } else {
         Alert.alert('비밀번호찾기', '휴대폰 번호를 인증해주세요', [
           {
             text: '확인',
-            onPress: () => {},
-          },
-        ]);
+            onPress: () => {}
+          }
+        ])
       }
     }
-  };
+  }
 
   // 모바일 인증 아이디 저장 및 버튼 색상 변화 상태
-  const [userMobileAuthNum, setUserMobileAuthNum] = useState(null);
-  const [mobileConfirmId, setMobileConfirmId] = useState(null);
-  const [isMobileConfimed, setMobileConfimed] = useState(false);
-  const [buttonPress, setbuttonPress] = useState(false);
+  const [userMobileAuthNum, setUserMobileAuthNum] = useState(null)
+  const [mobileConfirmId, setMobileConfirmId] = useState(null)
+  const [isMobileConfimed, setMobileConfimed] = useState(false)
+  const [buttonPress, setbuttonPress] = useState(false)
 
   // 본인인증(휴대전화번호) 문자발송 버튼
-  const [isSend, setIsSend] = useState(false);
+  const [isSend, setIsSend] = useState(false)
   const authenticateSMS = (register_mobile) => {
     if (register_mobile.length > 11) {
-      Alert.alert('휴대전화번호가 올바르지 않습니다.');
-      return false;
+      Alert.alert('휴대전화번호가 올바르지 않습니다.')
+      return false
     }
 
     if (register_mobile === '') {
-      Alert.alert('휴대전화번호를 입력해주세요.');
+      Alert.alert('휴대전화번호를 입력해주세요.')
     } else {
       Alert.alert(
         `${register_mobile}로 인증번호가 발송되었습니다.`,
@@ -123,61 +106,52 @@ const FinderPassword = ({navigation, route}) => {
         [
           {
             text: '확인',
-            onPress: () => setIsSend(true),
-          },
-        ],
-      );
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/auth_sms`,
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
-          mobile: register_mobile,
-        }),
-      })
+            onPress: () => setIsSend(true)
+          }
+        ]
+      )
+
+      VegasPost(
+        '/api/user/auth_sms',
+        qs.stringify({
+          mobile: register_mobile
+        })
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
-            setMobileConfirmId(res.data.data.sm_id);
+          if (res.result === 'success') {
+            setMobileConfirmId(res.data.sm_id)
           } else {
-            Alert.alert('휴대전화번호를 올바르게 입력해주세요.');
+            Alert.alert('휴대전화번호를 올바르게 입력해주세요.')
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  };
+  }
 
   // 본인인증(휴대전화번호) 인증번호 확인 버튼
   const confirmMobile = (register_confirmMobile) => {
     if (register_confirmMobile === '') {
-      Alert.alert('인증번호를 입력해주세요.');
-      return false;
+      Alert.alert('인증번호를 입력해주세요.')
+      return false
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/confirm_sms`,
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      VegasPost(
+        '/api/user/confirm_sms',
+        qs.stringify({
           sm_id: mobileConfirmId,
-          text: register_confirmMobile,
-        }),
-      })
+          text: register_confirmMobile
+        })
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
-            Alert.alert('본인 인증되었습니다.');
-            setMobileConfimed(true);
+          if (res.result === 'success') {
+            Alert.alert('본인 인증되었습니다.')
+            setMobileConfimed(true)
           } else {
-            Alert.alert('인증에 실패하였습니다.');
+            Alert.alert('인증에 실패하였습니다.')
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  };
+  }
 
   const validationSchema = yup.object().shape({
     register_nickname: yup
@@ -193,8 +167,8 @@ const FinderPassword = ({navigation, route}) => {
     register_confirmMobile: yup
       .string()
       .required('인증번호를 입력해주세요.')
-      .label('Mobile Confirm'),
-  });
+      .label('Mobile Confirm')
+  })
 
   return (
     <Container>
@@ -205,9 +179,9 @@ const FinderPassword = ({navigation, route}) => {
           <Header navigation={navigation} title={title} />
 
           {/* 사용자 아이디 입력 */}
-          <View style={{marginTop: 30}} />
-          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-            <Text style={{fontSize: 18, marginBottom: 10}}>
+          <View style={{ marginTop: 30 }} />
+          <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 10 }}>
               변경된 비밀번호는 입력한 전화번호로 전송됩니다.
             </Text>
           </View>
@@ -216,26 +190,18 @@ const FinderPassword = ({navigation, route}) => {
             initialValues={{
               register_nickname: '',
               register_mobile: '',
-              register_confirmMobile: '',
+              register_confirmMobile: ''
             }}
             onSubmit={async (values, actions) => {
               if (isMobileConfimed !== false) {
-                const form = new FormData();
-                form.append('ut_nickname', values.register_nickname);
-                form.append('ut_mobile', values.register_mobile);
-                const headers = {
-                  'api-secret':
-                    'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-                };
-                const api = await axios.post(
-                  baseUrl + '/api/user/search_password',
-                  form,
-                  {headers},
-                );
-                console.log('finder id', api);
+                const form = new FormData()
+                form.append('ut_nickname', values.register_nickname)
+                form.append('ut_mobile', values.register_mobile)
 
-                if (api.data.result === 'success') {
-                  const id = api.data.data.ut_user_id;
+                const res = await VegasPost('/api/user/search_password', form)
+
+                if (res.result === 'success') {
+                  const id = res.data.ut_user_id
                   Alert.alert(
                     '비밀번호 초기화',
                     `${values.register_mobile}로 임시 비밀번호가 발송되었습니다.`,
@@ -243,34 +209,36 @@ const FinderPassword = ({navigation, route}) => {
                       {
                         text: '확인(홈으로)',
                         onPress: () => {
-                          navigation.navigate('loading');
-                        },
-                      },
-                    ],
-                  );
+                          navigation.navigate('loading')
+                        }
+                      }
+                    ]
+                  )
                 } else {
-                  Alert.alert('비밀번호 초기화', api.data.error);
+                  Alert.alert('비밀번호 초기화', res.error)
                 }
 
                 setTimeout(() => {
-                  actions.setSubmitting(false);
-                }, 1000);
+                  actions.setSubmitting(false)
+                }, 1000)
               }
             }}
-            validationSchema={validationSchema}>
+            validationSchema={validationSchema}
+          >
             {(formikProps) => (
-              <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-                <View style={{marginBottom: 20}}>
-                  <Text style={{fontSize: 18, marginBottom: 10}}>닉네임</Text>
+              <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={{ fontSize: 18, marginBottom: 10 }}>닉네임</Text>
                   <View
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
-                    }}>
+                      alignItems: 'center'
+                    }}
+                  >
                     <Input
-                      placeholder="닉네임을 입력해주세요."
-                      placeholderTextColor="#E3E3E3"
+                      placeholder='닉네임을 입력해주세요.'
+                      placeholderTextColor='#E3E3E3'
                       style={{
                         borderWidth: 1,
                         borderColor: formikProps.errors.register_nickname
@@ -278,37 +246,38 @@ const FinderPassword = ({navigation, route}) => {
                           : '#eee',
                         borderRadius: 10,
                         paddingLeft: 10,
-                        width: '70%',
+                        width: '70%'
                       }}
                       onChangeText={(value) => {
-                        setCheckedNick(false);
-                        formikProps.setFieldValue('register_nickname', value);
+                        setCheckedNick(false)
+                        formikProps.setFieldValue('register_nickname', value)
                       }}
-                      autoCapitalize="none"
+                      autoCapitalize='none'
                       onBlur={formikProps.handleBlur('register_nickname')}
                       autoFocus
                     />
                   </View>
                   {formikProps.touched.register_nickname &&
                   formikProps.errors.register_nickname ? (
-                    <Text style={{color: '#4A26F4', marginBottom: 5}}>
+                    <Text style={{ color: '#4A26F4', marginBottom: 5 }}>
                       {formikProps.touched.register_nickname &&
                         formikProps.errors.register_nickname}
                     </Text>
-                  ) : null}
+                      ) : null}
                 </View>
-                <View style={{marginBottom: 20}}>
-                  <Text style={{fontSize: 18, marginBottom: 10}}>
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={{ fontSize: 18, marginBottom: 10 }}>
                     휴대전화번호
                   </Text>
                   <View
                     style={{
                       flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
+                      alignItems: 'center'
+                    }}
+                  >
                     <Input
-                      placeholder="핸드폰번호 입력"
-                      placeholderTextColor="#E3E3E3"
+                      placeholder='핸드폰번호 입력'
+                      placeholderTextColor='#E3E3E3'
                       style={{
                         borderStyle: 'solid',
                         borderWidth: 1,
@@ -320,16 +289,15 @@ const FinderPassword = ({navigation, route}) => {
                           formikProps.errors.register_mobile &&
                           !formikProps.values.register_mobile
                             ? 0
-                            : 5,
+                            : 5
                       }}
                       value={formikProps.values.register_mobile}
                       onChangeText={formikProps.handleChange('register_mobile')}
-                      keyboardType="number-pad"
+                      keyboardType='number-pad'
                     />
                     <Button
                       onPress={() =>
-                        authenticateSMS(formikProps.values.register_mobile)
-                      }
+                        authenticateSMS(formikProps.values.register_mobile)}
                       style={[
                         {
                           backgroundColor: isSend ? '#ccc' : '#4A26F4',
@@ -341,25 +309,26 @@ const FinderPassword = ({navigation, route}) => {
                           lineHeight: 45,
                           marginLeft: 5,
                           borderRadius: 10,
-                          elevation: 0,
-                        },
+                          elevation: 0
+                        }
                       ]}
-                      disabled={!!isSend}>
-                      <Text style={{color: '#fff'}}>문자발송</Text>
+                      disabled={!!isSend}
+                    >
+                      <Text style={{ color: '#fff' }}>문자발송</Text>
                     </Button>
                   </View>
                   {formikProps.touched.register_mobile &&
                   formikProps.errors.register_mobile &&
                   !formikProps.values.register_mobile ? (
-                    <Text style={{color: '#4A26F4', marginBottom: 15}}>
+                    <Text style={{ color: '#4A26F4', marginBottom: 15 }}>
                       {formikProps.touched.register_mobile &&
                         formikProps.errors.register_mobile}
                     </Text>
-                  ) : null}
-                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      ) : null}
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Input
-                      placeholder="인증번호 입력"
-                      placeholderTextColor="#E3E3E3"
+                      placeholder='인증번호 입력'
+                      placeholderTextColor='#E3E3E3'
                       style={{
                         borderStyle: 'solid',
                         borderWidth: 1,
@@ -370,19 +339,18 @@ const FinderPassword = ({navigation, route}) => {
                           formikProps.touched.register_confirmMobile &&
                           formikProps.errors.register_confirmMobile
                             ? 0
-                            : 5,
+                            : 5
                       }}
                       value={formikProps.values.register_confirmMobile}
                       onChangeText={formikProps.handleChange(
-                        'register_confirmMobile',
+                        'register_confirmMobile'
                       )}
                       // onChangeText={(text) => setUserMobileAuthNum(text)}
-                      keyboardType="number-pad"
+                      keyboardType='number-pad'
                     />
                     <Button
                       onPress={() =>
-                        confirmMobile(formikProps.values.register_confirmMobile)
-                      }
+                        confirmMobile(formikProps.values.register_confirmMobile)}
                       style={{
                         backgroundColor: isMobileConfimed ? '#ccc' : '#4A26F4',
                         width: 100,
@@ -391,12 +359,14 @@ const FinderPassword = ({navigation, route}) => {
                         marginLeft: 5,
                         justifyContent: 'center',
                         alignItems: 'center',
-                        elevation: 0,
-                      }}>
+                        elevation: 0
+                      }}
+                    >
                       <Text
                         style={{
-                          color: '#fff',
-                        }}>
+                          color: '#fff'
+                        }}
+                      >
                         {isMobileConfimed ? '인증완료' : '인증하기'}
                       </Text>
                     </Button>
@@ -404,11 +374,11 @@ const FinderPassword = ({navigation, route}) => {
                   {formikProps.touched.register_confirmMobile &&
                   formikProps.errors.register_confirmMobile &&
                   !isMobileConfimed ? (
-                    <Text style={{color: '#4A26F4', marginBottom: 15}}>
+                    <Text style={{ color: '#4A26F4', marginBottom: 15 }}>
                       {formikProps.touched.register_confirmMobile &&
                         formikProps.errors.register_confirmMobile}
                     </Text>
-                  ) : null}
+                      ) : null}
                 </View>
 
                 <View
@@ -416,8 +386,9 @@ const FinderPassword = ({navigation, route}) => {
                     flexDirection: 'row',
                     justifyContent: 'flex-end',
                     marginTop: 30,
-                    marginBottom: 80,
-                  }}>
+                    marginBottom: 80
+                  }}
+                >
                   <TouchableOpacity
                     activeOpacity={0.7}
                     onPress={formikProps.handleSubmit}
@@ -425,13 +396,15 @@ const FinderPassword = ({navigation, route}) => {
                       backgroundColor: '#4A26F4',
                       paddingHorizontal: 40,
                       paddingVertical: 15,
-                      borderRadius: 30,
-                    }}>
+                      borderRadius: 30
+                    }}
+                  >
                     <Text
                       style={{
                         fontSize: 18,
-                        color: '#fff',
-                      }}>
+                        color: '#fff'
+                      }}
+                    >
                       찾기
                     </Text>
                   </TouchableOpacity>
@@ -442,7 +415,7 @@ const FinderPassword = ({navigation, route}) => {
         </Content>
       </ScrollView>
     </Container>
-  );
+  )
 };
 
-export default FinderPassword;
+export default FinderPassword

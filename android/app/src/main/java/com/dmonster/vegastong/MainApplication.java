@@ -21,6 +21,8 @@ import java.util.List;
 import androidx.multidex.MultiDexApplication;
 // import com.dooboolab.kakaologins.RNKakaoLoginsPackage;
 
+import com.lugg.ReactNativeConfig.ReactNativeConfigPackage; // .env 환경변수 react-native-config 패키지 설치
+
 public class MainApplication extends MultiDexApplication  implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
@@ -45,6 +47,7 @@ public class MainApplication extends MultiDexApplication  implements ReactApplic
           // packages.add(new RNFirebaseNotificationsPackage());
 //            packages.add(new RNKakaoLoginsPackage()); // kakao
 // packages.add(new RNKakaoLoginsPackage());
+          new ReactNativeConfigPackage(); // .env 환경변수 react-native-config 패키지 설치
           return packages;
         }
 

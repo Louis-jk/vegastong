@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -6,19 +6,19 @@ import {
   Image,
   ScrollView,
   Alert,
-  Dimensions,
-} from 'react-native';
-import {Container, Content, Thumbnail, Input, Item, Button} from 'native-base';
+  Dimensions
+} from 'react-native'
+import { Container, Content, Thumbnail, Input, Item, Button } from 'native-base'
 
-import qs from 'qs';
-import axios from 'axios';
-import {setToken, setDrawer} from '../Module/Reducer';
-import {useSelector, useDispatch} from 'react-redux';
-import ImagePicker from 'react-native-image-crop-picker';
-import Postcode from '@actbase/react-daum-postcode';
-import Modal from 'react-native-modal';
-import AsyncStorage from '@react-native-community/async-storage';
-import Header from '../Common/Header';
+import qs from 'qs'
+
+import { setToken, setDrawer } from '../Module/Reducer'
+import { useSelector, useDispatch } from 'react-redux'
+import ImagePicker from 'react-native-image-crop-picker'
+import Postcode from '@actbase/react-daum-postcode'
+import Modal from 'react-native-modal'
+import AsyncStorage from '@react-native-community/async-storage'
+import Header from '../Common/Header'
 // import {
 //   userInfoNickname,
 //   userInfoDivision,
@@ -27,7 +27,7 @@ import Header from '../Common/Header';
 //   userInfoAddressDetail,
 //   userInfoImage,
 // } from '../Module/UserInfoReducer';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import {
   userInfoId,
   userInfoNickname,
@@ -42,17 +42,19 @@ import {
   userInfoImage,
   userInfoCreatedAt,
   userInfoUpdatedAt,
-  userInfoFcmToken,
-} from '../Module/UserInfoReducer';
-Icon.loadFont();
+  userInfoFcmToken
+} from '../Module/UserInfoReducer'
+import { VegasPost } from '../../utils/axios.config'
+import Config from 'react-native-config'
+Icon.loadFont()
 
-const baseUrl = 'https://dmonster1826.cafe24.com';
+const BASE_URL = Config.BASE_URL
 
 const EditScreen = (props) => {
-  const navigation = props.navigation;
-  const title = props.route.params.title;
+  const navigation = props.navigation
+  const title = props.route.params.title
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
   // 유저 정보 불러오기
   const {
@@ -63,29 +65,29 @@ const EditScreen = (props) => {
     ut_division,
     ut_zipcode,
     ut_address,
-    ut_address_detail,
-  } = useSelector((state) => state.UserInfoReducer);
+    ut_address_detail
+  } = useSelector((state) => state.UserInfoReducer)
 
   // const userPassword = ut_password;
 
-  const [nickName, setNickName] = useState(ut_nickname);
-  const [mobile, setMobile] = useState(ut_mobile);
-  const [userImage, setUserImage] = useState(ut_image);
-  const [userDivision, setUserDivision] = useState(ut_division);
-  const [userZipCode, setUserZipCode] = useState(ut_zipcode);
-  const [userAddress, setUserAddress] = useState(ut_address);
-  const [userAddressDetail, setUserAddressDetail] = useState(ut_address_detail);
+  const [nickName, setNickName] = useState(ut_nickname)
+  const [mobile, setMobile] = useState(ut_mobile)
+  const [userImage, setUserImage] = useState(ut_image)
+  const [userDivision, setUserDivision] = useState(ut_division)
+  const [userZipCode, setUserZipCode] = useState(ut_zipcode)
+  const [userAddress, setUserAddress] = useState(ut_address)
+  const [userAddressDetail, setUserAddressDetail] = useState(ut_address_detail)
 
-  const [checked, setChecked] = useState('first');
+  const [checked, setChecked] = useState('first')
 
   // 다음 주소 api 모달 상태관리
-  const [postModalView, setPostModalView] = useState(false);
+  const [postModalView, setPostModalView] = useState(false)
 
   // image-crop-picker 가져온 이미지 저장
-  const [profileimage, setProfileImage] = useState(null);
-  const [changedProfileimage, changeProfileImage] = useState(null);
+  const [profileimage, setProfileImage] = useState(null)
+  const [changedProfileimage, changeProfileImage] = useState(null)
 
-  const [checkedNick, setCheckedNick] = useState(false);
+  const [checkedNick, setCheckedNick] = useState(false)
 
   const onSubmit = () => {
     if (
@@ -98,62 +100,57 @@ const EditScreen = (props) => {
     ) {
       Alert.alert('비어있는 입력란이 있습니다.', '입력란을 채워주세요.', [
         {
-          text: '확인',
-        },
-      ]);
+          text: '확인'
+        }
+      ])
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/modify_myinfo`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      VegasPost(
+        '/api/user/modify_myinfo',
+        qs.stringify({
           ut_nickname: nickName,
           ut_division: userDivision,
           ut_zipcode: userZipCode,
           ut_address: userAddress,
-          ut_address_detail: userAddressDetail,
+          ut_address_detail: userAddressDetail
         }),
-      })
+        { headers: { authorization: `${token}` } }
+      )
         .then((res) => {
           if (res.data.result === 'success') {
-            dispatch(userInfoNickname(nickName));
-            dispatch(userInfoDivision(userDivision));
-            dispatch(userInfoZipcode(userZipCode));
-            dispatch(userInfoAddress(userAddress));
-            dispatch(userInfoAddressDetail(userAddressDetail));
-            dispatch(userInfoImage(userImage));
-            navigation.navigate('home');
+            dispatch(userInfoNickname(nickName))
+            dispatch(userInfoDivision(userDivision))
+            dispatch(userInfoZipcode(userZipCode))
+            dispatch(userInfoAddress(userAddress))
+            dispatch(userInfoAddressDetail(userAddressDetail))
+            dispatch(userInfoImage(userImage))
+            navigation.navigate('home')
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  };
+  }
 
   const goToLogin = () => {
-    navigation.navigate('login');
+    navigation.navigate('login')
   };
 
   const logOutHandle = () => {
-    AsyncStorage.clear().then(dispatch(setToken('')));
-    dispatch(userInfoId(null));
-    dispatch(userInfoNickname(null));
-    dispatch(userInfoDivision(null));
-    dispatch(userInfoJoinType(null));
-    dispatch(userInfoSocialId(null));
-    dispatch(userInfoPassword(null));
-    dispatch(userInfoMobile(null));
-    dispatch(userInfoZipcode(null));
-    dispatch(userInfoAddress(null));
-    dispatch(userInfoAddressDetail(null));
-    dispatch(userInfoImage(null));
-    dispatch(userInfoCreatedAt(null));
-    dispatch(userInfoUpdatedAt(null));
-    dispatch(userInfoFcmToken(null));
-    goToLogin();
+    AsyncStorage.clear().then(dispatch(setToken('')))
+    dispatch(userInfoId(null))
+    dispatch(userInfoNickname(null))
+    dispatch(userInfoDivision(null))
+    dispatch(userInfoJoinType(null))
+    dispatch(userInfoSocialId(null))
+    dispatch(userInfoPassword(null))
+    dispatch(userInfoMobile(null))
+    dispatch(userInfoZipcode(null))
+    dispatch(userInfoAddress(null))
+    dispatch(userInfoAddressDetail(null))
+    dispatch(userInfoImage(null))
+    dispatch(userInfoCreatedAt(null))
+    dispatch(userInfoUpdatedAt(null))
+    dispatch(userInfoFcmToken(null))
+    goToLogin()
   };
 
   const leaveConfirm = () => {
@@ -163,43 +160,35 @@ const EditScreen = (props) => {
       [
         {
           text: '탈퇴하기',
-          onPress: () => leaveApp(),
+          onPress: () => leaveApp()
         },
         {
           text: '취소하기',
-          onPress: () => {},
-        },
-      ],
-    );
+          onPress: () => {}
+        }
+      ]
+    )
   };
 
   const leaveApp = () => {
-    axios({
-      method: 'post',
-      url: `${baseUrl}/api/user/leave_app`,
-      headers: {
-        authorization: token,
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-    })
+    VegasPost('/api/user/leave_app', {}, { headers: { authorization: `${token}` } })
       .then((res) => {
-        console.log('회원탈퇴 : ', res);
+        console.log('회원탈퇴 : ', res)
 
-        if (res.data.result === 'success') {
+        if (res.result === 'success') {
           Alert.alert(
             '탈퇴되었습니다.',
             '기록이 모두 삭제되었습니다. 이틀동안은 재가입을 하실 수 없습니다.',
             [
               {
                 text: '확인',
-                onPress: () => logOutHandle(),
-              },
-            ],
-          );
+                onPress: () => logOutHandle()
+              }
+            ]
+          )
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   // react-native-image-crop-picker 모듈 사용
@@ -215,69 +204,59 @@ const EditScreen = (props) => {
       cropperCircleOverlay: true,
       useFrontCamera: false,
       includeBase64: true,
-      cropping: true,
+      cropping: true
     })
       .then((img) => {
-        axios({
-          method: 'post',
-          url: `${baseUrl}/api/user/update_my_image`,
-          headers: {
-            authorization: token,
-            'api-secret':
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-          },
-          data: qs.stringify({
-            image: img.data,
+        VegasPost(
+          '/api/user/update_my_image',
+          qs.stringify({
+            image: img.data
           }),
-        })
+          { headers: { authorization: `${token}` } }
+        )
           .then((res) => setUserImage(res.data.data.ut_image))
-          .catch((err) => console.log(err));
+          .catch((err) => console.log(err))
       })
-      .catch((e) => console.log(e.message ? e.message : e));
+      .catch((e) => console.log(e.message ? e.message : e))
   };
 
-  console.log('props 는 ? ', props);
+  console.log('props 는 ? ', props)
   // Redux 연결
   console.log(
     'redux test token : ',
-    useSelector((state) => state.Reducer.token),
-  );
+    useSelector((state) => state.Reducer.token)
+  )
 
   // token값 불러오기 Reducer
-  const {token} = useSelector((state) => state.Reducer);
+  const { token } = useSelector((state) => state.Reducer)
 
   // 닉네임 중복 체크
   const checkUserNick = (nickName) => {
     if (nickName.length > 6) {
-      Alert.alert('닉네임은 6자리 이하로 입력해주세요.');
-      return false;
+      Alert.alert('닉네임은 6자리 이하로 입력해주세요.')
+      return false
     }
 
-    if (nickName == '') {
-      Alert.alert('닉네임을 입력해주세요.');
+    if (nickName === '') {
+      Alert.alert('닉네임을 입력해주세요.')
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/check_nickname`,
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
-          ut_nickname: nickName,
-        }),
-      })
+      VegasPost(
+        '/api/user/check_nickname',
+        qs.stringify({
+          ut_nickname: nickName
+        })
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
-            Alert.alert('사용 가능한 닉네임입니다.');
-            setCheckedNick(true);
+          if (res.result === 'success') {
+            Alert.alert('사용 가능한 닉네임입니다.')
+            setCheckedNick(true)
           } else {
-            PwAlertMsg();
+            PwAlertMsg()
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  };
+  }
 
   const PwAlertMsg = () => {
     Alert.alert(
@@ -286,112 +265,103 @@ const EditScreen = (props) => {
       [
         {
           text: '확인',
-          onPress: () => setNickName(''),
-        },
-      ],
-    );
+          onPress: () => setNickName('')
+        }
+      ]
+    )
   };
 
   // 모바일 인증 아이디 저장 및 버튼 색상 변화 상태
-  const [mobileConfirmId, setMobileConfirmId] = useState(null);
-  const [isMobileConfirmed, setMobileConfirmed] = useState(false);
-  const [isMobileConfirmNum, setMobileConfirmNum] = useState(false);
+  const [mobileConfirmId, setMobileConfirmId] = useState(null)
+  const [isMobileConfirmed, setMobileConfirmed] = useState(false)
+  const [isMobileConfirmNum, setMobileConfirmNum] = useState(false)
 
   // 본인인증(휴대전화번호) 문자발송 버튼
   const authenticateSMS = (register_mobile) => {
     if (register_mobile.length > 11) {
-      Alert.alert('휴대전화번호가 올바르지 않습니다.');
-      return false;
+      Alert.alert('휴대전화번호가 올바르지 않습니다.')
+      return false
     }
 
     if (register_mobile === '') {
-      Alert.alert('휴대전화번호를 입력해주세요.');
+      Alert.alert('휴대전화번호를 입력해주세요.')
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/change_mobile`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
-          mobile: register_mobile,
+      VegasPost(
+        '/api/user/change_mobile',
+        qs.stringify({
+          mobile: register_mobile
         }),
-      })
+        { headers: { authorization: `${token}` } }
+      )
         .then((res) => {
-          if (res.data.result == 'success') {
-            setMobileConfirmId(res.data.data.sm_id);
-            Alert.alert('인증번호가 발송되었습니다.');
+          if (res.result === 'success') {
+            setMobileConfirmId(res.data.sm_id)
+            Alert.alert('인증번호가 발송되었습니다.')
           } else {
-            Alert.alert('휴대전화번호를 올바르게 입력해주세요.');
+            Alert.alert('휴대전화번호를 올바르게 입력해주세요.')
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  };
+  }
 
   // 본인인증(휴대전화번호) 인증번호 확인 버튼
   const confirmMobile = (register_confirmMobile) => {
     if (register_confirmMobile === '') {
-      Alert.alert('인증번호를 입력해주세요.');
-      return false;
+      Alert.alert('인증번호를 입력해주세요.')
+      return false
     } else {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/confirm_change_mobile`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      VegasPost(
+        '/api/user/confirm_change_mobile',
+        qs.stringify({
           sm_id: mobileConfirmId,
-          text: register_confirmMobile,
+          text: register_confirmMobile
         }),
-      })
+        { headers: { authorization: `${token}` } }
+      )
         .then((res) => {
-          console.log('인증:', res);
-          if (res.data.result == 'success') {
-            Alert.alert('휴대전화번호가 변경 되었습니다.');
-            setMobileConfirmed(true);
+          console.log('인증:', res)
+          if (res.result === 'success') {
+            Alert.alert('휴대전화번호가 변경 되었습니다.')
+            setMobileConfirmed(true)
           } else {
-            Alert.alert('인증에 실패하였습니다.');
+            Alert.alert('인증에 실패하였습니다.')
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     }
-  };
+  }
 
   return (
     <Container>
       <Header navigation={navigation} title={title} />
       <ScrollView>
         {/* 다음 주소 api 모달 */}
-        <Modal animationType="fade" transparent visible={postModalView}>
-          <View style={{backgroundColor: '#4A26F4', borderRadius: 10}}>
+        <Modal animationType='fade' transparent visible={postModalView}>
+          <View style={{ backgroundColor: '#4A26F4', borderRadius: 10 }}>
             <View
               style={[
                 {
                   width: '95%',
                   paddingVertical: 30,
                   paddingHorizontal: 10,
-                  margin: 10,
-                },
-              ]}>
-              <View style={{width: '100%', height: 300}}>
+                  margin: 10
+                }
+              ]}
+            >
+              <View style={{ width: '100%', height: 300 }}>
                 <Postcode
-                  style={{flex: 1}}
-                  jsOptions={{animated: true}}
+                  style={{ flex: 1 }}
+                  jsOptions={{ animated: true }}
                   onSelected={(data) => {
                     // console.log(JSON.stringify(data));
-                    setUserZipCode(data.zonecode);
-                    setUserAddress(data.address + ' ' + data.buildingName);
+                    setUserZipCode(data.zonecode)
+                    setUserAddress(data.address + ' ' + data.buildingName)
 
-                    console.log('다음post api : ', data);
+                    console.log('다음post api : ', data)
                     // setFieldValue('ct_addr', data.address);
                     // setFieldTouched('ct_addr_detail');
-                    setPostModalView(false);
+                    setPostModalView(false)
                   }}
                 />
               </View>
@@ -400,11 +370,12 @@ const EditScreen = (props) => {
                 style={{
                   marginTop: 20,
                   flexDirection: 'row',
-                  justifyContent: 'center',
-                }}>
+                  justifyContent: 'center'
+                }}
+              >
                 <TouchableOpacity
                   onPress={() => {
-                    setPostModalView(false);
+                    setPostModalView(false)
                   }}
                   style={{
                     justifyContent: 'center',
@@ -412,9 +383,10 @@ const EditScreen = (props) => {
                     width: 150,
                     height: 45,
                     borderRadius: 25,
-                    backgroundColor: '#fff',
-                  }}>
-                  <Text style={{fontSize: 16}}>닫기</Text>
+                    backgroundColor: '#fff'
+                  }}
+                >
+                  <Text style={{ fontSize: 16 }}>닫기</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -429,20 +401,21 @@ const EditScreen = (props) => {
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              marginVertical: 30,
-            }}>
+              marginVertical: 30
+            }}
+          >
             {userImage ? (
               <Thumbnail
                 source={{
-                  uri: `${baseUrl}${userImage}`,
+                  uri: `${BASE_URL}${userImage}`
                 }}
                 style={{
                   width: 120,
                   height: 120,
                   borderRadius: 120,
-                  marginBottom: 10,
+                  marginBottom: 10
                 }}
-                resizeMode="cover"
+                resizeMode='cover'
               />
             ) : (
               <Thumbnail
@@ -451,9 +424,9 @@ const EditScreen = (props) => {
                   width: 120,
                   height: 120,
                   borderRadius: 120,
-                  marginBottom: 10,
+                  marginBottom: 10
                 }}
-                resizeMode="cover"
+                resizeMode='cover'
               />
             )}
 
@@ -462,8 +435,9 @@ const EditScreen = (props) => {
                 fontSize: 16,
                 color: '#666',
                 textDecorationLine: 'underline',
-                padding: 10,
-              }}>
+                padding: 10
+              }}
+            >
               프로필사진 수정
             </Text>
           </TouchableOpacity>
@@ -473,22 +447,23 @@ const EditScreen = (props) => {
             style={{
               paddingHorizontal: 20,
               paddingVertical: 10,
-              marginBottom: 20,
-            }}>
-            <Text style={{fontSize: 18, marginBottom: 5}}>닉네임</Text>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              marginBottom: 20
+            }}
+          >
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>닉네임</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Input
-                placeholder=""
+                placeholder=''
                 value={nickName}
                 onChangeText={(text) => setNickName(text)}
-                placeholderTextColor="#E3E3E3"
+                placeholderTextColor='#E3E3E3'
                 style={{
                   borderStyle: 'solid',
                   borderWidth: 1,
                   borderColor: '#eee',
                   borderRadius: 10,
                   paddingLeft: 15,
-                  marginRight: 5,
+                  marginRight: 5
                 }}
               />
               <TouchableOpacity
@@ -498,7 +473,7 @@ const EditScreen = (props) => {
                     ? {
                         borderColor: '#4A26F4',
                         borderWidth: 1,
-                        borderStyle: 'solid',
+                        borderStyle: 'solid'
                       }
                     : null,
                   {
@@ -507,17 +482,19 @@ const EditScreen = (props) => {
                     height: 50,
                     borderRadius: 10,
                     justifyContent: 'center',
-                    alignItems: 'center',
-                  },
-                ]}>
+                    alignItems: 'center'
+                  }
+                ]}
+              >
                 <Text
                   style={{
                     textAlign: 'center',
                     lineHeight: 45,
                     marginLeft: 5,
                     borderRadius: 10,
-                    color: checkedNick ? '#B5B5B5' : '#4A26F4',
-                  }}>
+                    color: checkedNick ? '#B5B5B5' : '#4A26F4'
+                  }}
+                >
                   {checkedNick ? '중복확인' : '변경'}
                 </Text>
               </TouchableOpacity>
@@ -529,41 +506,45 @@ const EditScreen = (props) => {
             style={{
               paddingHorizontal: 20,
               paddingVertical: 10,
-              marginBottom: 20,
-            }}>
-            <Text style={{fontSize: 18, marginBottom: 5}}>사용자 구분</Text>
+              marginBottom: 20
+            }}
+          >
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>사용자 구분</Text>
 
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                marginTop: 10,
-              }}>
+                marginTop: 10
+              }}
+            >
               <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => setUserDivision('resident')}
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+                  alignItems: 'center'
+                }}
+              >
                 <Image
                   source={
                     userDivision === 'resident'
                       ? require('../src/assets/img/radio_on.png')
                       : require('../src/assets/img/radio_off.png')
                   }
-                  style={{width: 30, height: 30}}
-                  resizeMode="contain"
+                  style={{ width: 30, height: 30 }}
+                  resizeMode='contain'
                 />
                 <Text
                   style={{
                     fontSize: 18,
                     color: '#333',
                     marginRight: 30,
-                    marginLeft: 10,
-                  }}>
+                    marginLeft: 10
+                  }}
+                >
                   지역인
                 </Text>
               </TouchableOpacity>
@@ -574,24 +555,26 @@ const EditScreen = (props) => {
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+                  alignItems: 'center'
+                }}
+              >
                 <Image
                   source={
                     userDivision === 'traveler'
                       ? require('../src/assets/img/radio_on.png')
                       : require('../src/assets/img/radio_off.png')
                   }
-                  style={{width: 30, height: 30}}
-                  resizeMode="contain"
+                  style={{ width: 30, height: 30 }}
+                  resizeMode='contain'
                 />
                 <Text
                   style={{
                     fontSize: 18,
                     color: '#333',
                     marginRight: 30,
-                    marginLeft: 10,
-                  }}>
+                    marginLeft: 10
+                  }}
+                >
                   여행자
                 </Text>
               </TouchableOpacity>
@@ -750,22 +733,23 @@ const EditScreen = (props) => {
               style={{
                 paddingHorizontal: 20,
                 paddingVertical: 10,
-                marginBottom: 20,
-              }}>
+                marginBottom: 20
+              }}
+            >
               <Text>비밀번호를 변경하고 싶으시면</Text>
 
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('ChangePW', {title: '비밀번호 변경하기'})
-                }
+                  navigation.navigate('ChangePW', { title: '비밀번호 변경하기' })}
                 style={{
                   justifyContent: 'center',
                   alignItems: 'center',
                   paddingVertical: 15,
                   paddingHorizontal: 20,
                   marginVertical: 10,
-                  backgroundColor: '#eaeaea',
-                }}>
+                  backgroundColor: '#eaeaea'
+                }}
+              >
                 <Text>비밀번호 변경하기</Text>
               </TouchableOpacity>
             </View>
@@ -777,8 +761,9 @@ const EditScreen = (props) => {
               justifyContent: 'center',
               alignItems: 'center',
               marginTop: 30,
-              marginBottom: 80,
-            }}>
+              marginBottom: 80
+            }}
+          >
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={onSubmit}
@@ -789,13 +774,15 @@ const EditScreen = (props) => {
                 paddingHorizontal: 70,
                 paddingVertical: 15,
                 borderRadius: 30,
-                marginBottom: 15,
-              }}>
+                marginBottom: 15
+              }}
+            >
               <Text
                 style={{
                   fontSize: 18,
-                  color: '#fff',
-                }}>
+                  color: '#fff'
+                }}
+              >
                 수정하기
               </Text>
             </TouchableOpacity>
@@ -809,13 +796,15 @@ const EditScreen = (props) => {
                 borderWidth: 1,
                 paddingHorizontal: 70,
                 paddingVertical: 15,
-                borderRadius: 30,
-              }}>
+                borderRadius: 30
+              }}
+            >
               <Text
                 style={{
                   fontSize: 18,
-                  color: '#4A26F4',
-                }}>
+                  color: '#4A26F4'
+                }}
+              >
                 탈퇴하기
               </Text>
             </TouchableOpacity>
@@ -823,7 +812,7 @@ const EditScreen = (props) => {
         </Content>
       </ScrollView>
     </Container>
-  );
+  )
 };
 
-export default EditScreen;
+export default EditScreen

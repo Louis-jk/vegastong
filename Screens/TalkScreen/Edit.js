@@ -23,10 +23,8 @@ import Modal from 'react-native-modal';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import qs from 'qs';
-import axios from 'axios';
 import Header from '../Common/Header';
-
-const baseUrl = 'https://dmonster1826.cafe24.com';
+import {VegasGet, VegasPost} from '../../utils/axios.config';
 
 const Edit = (props) => {
   const {
@@ -71,18 +69,11 @@ const Edit = (props) => {
 
   const [files, setFiles] = useState([]);
   const getTalk = () => {
-    axios({
-      method: 'get',
-      url: `${baseUrl}/api/talk/get_talk/${tk_id}`,
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-    })
+    VegasGet(`/api/talk/get_talk/${tk_id}`)
       .then((res) => {
         console.log('[EDIT PAGE] get Talk : ', res);
-        if (res.data.result === 'success') {
-          setFiles(res.data.data.files);
+        if (res.result === 'success') {
+          setFiles(res.data.files);
         }
       })
       .catch((err) => console.log(err));
@@ -238,20 +229,11 @@ const Edit = (props) => {
         tag_shop: isTagShop ? 1 : 0,
       };
 
-      const options = {
-        url: `${baseUrl}/api/talk/modify_talk`,
-        method: 'post',
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify(sendData),
-      };
-
-      await axios(options)
+      await VegasPost('/api/talk/modify_talk', qs.stringify(sendData), {
+        headers: {authorization: `${token}`},
+      })
         .then((res) => {
-          if (res.data.result === 'success') {
+          if (res.result === 'success') {
             Alert.alert('수정되었습니다.', '리스트로 이동합니다.', [
               {
                 text: '확인',
@@ -262,21 +244,16 @@ const Edit = (props) => {
         })
         .catch((err) => console.log(err.message));
 
-      await axios({
-        method: 'post',
-        url: `${baseUrl}/api/talk/add_talk_images`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      await VegasPost(
+        '/api/talk/add_talk_images',
+        qs.stringify({
           tk_id,
           images: sendSeverImage,
         }),
-      })
+        {headers: {authorization: `${token}`}},
+      )
         .then((res) => {
-          if (res.data.result === 'success') {
+          if (res.result === 'success') {
             console.log('Image Upload Success!');
           }
         })
@@ -300,17 +277,11 @@ const Edit = (props) => {
   };
 
   const DelTalkServerImage = (ft_id) => {
-    axios({
-      method: 'get',
-      url: `${baseUrl}/api/talk/remove_talk_image/${ft_id}`,
-      headers: {
-        authorization: token,
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
+    VegasGet(`/api/talk/remove_talk_image/${ft_id}`, {
+      headers: {authorization: `${token}`},
     })
       .then((res) => {
-        if (res.data.result === 'success') {
+        if (res.result === 'success') {
           getTalk();
         }
       })

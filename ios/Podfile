@@ -30,11 +30,11 @@ target 'vegastong' do
   end
 end
 
-target 'vegastong-tvOS' do
-  # Pods for vegastong-tvOS
-
-  target 'vegastong-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-end
+#target 'vegastong-tvOS' do
+#  # Pods for vegastong-tvOS
+#
+#  target 'vegastong-tvOSTests' do
+#    inherit! :search_paths
+#    # Pods for testing
+#  end
+#end

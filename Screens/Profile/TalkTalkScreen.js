@@ -12,13 +12,14 @@ import {
 import { Container, Content } from 'native-base'
 import { useSelector } from 'react-redux'
 import qs from 'qs'
-import axios from 'axios'
 import { useLinkTo } from '@react-navigation/native'
 import 'moment/locale/ko'
 import moment from 'moment'
 import Header from '../Common/Header'
+import { VegasPost } from '../../utils/axios.config'
+import Config from 'react-native-config'
 
-const baseUrl = 'https://dmonster1826.cafe24.com'
+const BASE_URL = Config.BASE_URL
 
 const TalkTalkScreen = ({ navigation, route }) => {
   const title = route.params.title
@@ -37,22 +38,17 @@ const TalkTalkScreen = ({ navigation, route }) => {
 
   const getMyReply = async () => {
     try {
-      const res = await axios({
-        method: 'post',
-        url: `${baseUrl}/api/talk/get_my_talks`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U'
-        },
-        data: qs.stringify({
+      const res = await VegasPost(
+        '/api/talk/get_my_talks',
+        qs.stringify({
           page: fetchingStatus ? pageCurrent + 1 : false
-        })
-      })
+        }),
+        { headers: { authorization: `${token}` } }
+      )
 
-      if (res.data.result === 'success') {
-        setMyWord(myWord.concat(res.data.data))
-        setFetchingStatus(res.data.data.length !== 0)
+      if (res.result === 'success') {
+        setMyWord(myWord.concat(res.data))
+        setFetchingStatus(res.data.length !== 0)
         setIsLoading(false)
         setPageCurrent(pageCurrent + 1)
       } else {
@@ -203,7 +199,7 @@ const TalkTalkScreen = ({ navigation, route }) => {
             {item.files.length > 0 ? (
               <ImageBackground
                 source={{
-                  uri: `${baseUrl}${item.files[0].ft_file_path}`
+                  uri: `${BASE_URL}${item.files[0].ft_file_path}`
                 }}
                 resizeMode='cover'
                 style={{

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
-  FlatList
-} from 'react-native'
+  FlatList,
+} from 'react-native';
 import {
   Container,
   Content,
@@ -17,73 +17,63 @@ import {
   Input,
   InputGroup,
   Header,
-  Thumbnail
-} from 'native-base'
-import { useDispatch, useSelector } from 'react-redux'
-import Swiper from 'react-native-swiper'
-import 'moment/locale/ko'
-import moment from 'moment'
+  Thumbnail,
+} from 'native-base';
+import {useDispatch, useSelector} from 'react-redux';
+import Swiper from 'react-native-swiper';
+import Config from 'react-native-config';
+import 'moment/locale/ko';
+import moment from 'moment';
 
 // import Swiper from 'react-native-swiper';
-import BottomTabs from './BottomTabs'
-import SearchBar from './SearchBar'
-import Travel from '../CurationScreen/Tags/Travel'
-import Restaurant from '../CurationScreen/Tags/Restaurant'
-import Cafe from '../CurationScreen/Tags/Cafe'
-import Shopping from '../CurationScreen/Tags/Shopping'
+import BottomTabs from './BottomTabs';
+import SearchBar from './SearchBar';
+import Travel from '../CurationScreen/Tags/Travel';
+import Restaurant from '../CurationScreen/Tags/Restaurant';
+import Cafe from '../CurationScreen/Tags/Cafe';
+import Shopping from '../CurationScreen/Tags/Shopping';
 
-import qs from 'qs'
-import axios from 'axios'
+import {VegasGet} from '../../utils/axios.config';
 
-const { width, height } = Dimensions.get('window')
-
-// const baseUrl = 'https://gongjuro.com'
-const baseUrl = 'https://dmonster1826.cafe24.com'
-
-const { window } = Dimensions.get('window')
+const BASE_URL = Config.BASE_URL;
+const {width, window} = Dimensions.get('window');
 
 const SearchList = (props) => {
-  const navigation = props.navigation
-  console.log('Search List : ', props)
-  const routeName = props.route.params.text
+  const navigation = props.navigation;
+  const routeName = props.route.params.text;
 
-  console.log('SearchList Props :: ', props)
-
-  const [searchLists, setSearchLists] = useState([])
-  const keyword = useSelector((state) => state.Reducer.keyword)
-  const tag = useSelector((state) => state.Reducer.tag)
-  const userId = useSelector((state) => state.UserInfoReducer.ut_id)
+  const [searchLists, setSearchLists] = useState([]);
+  const keyword = useSelector((state) => state.Reducer.keyword);
+  const tag = useSelector((state) => state.Reducer.tag);
+  const userId = useSelector((state) => state.UserInfoReducer.ut_id);
 
   useEffect(() => {
-    axios({
-      method: 'get',
-      url: `${baseUrl}/api/common/search_main`,
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U'
-      },
-      params: {
-        tag: tag,
-        keyword: keyword
-      }
-    })
-      .then((res) => setSearchLists(res.data.data))
-      .catch((err) => console.log(err))
-  }, [tag, keyword])
+    VegasGet(`/api/common/search_main?tag=${tag}&keyword=${keyword}`)
+      .then((res) => setSearchLists(res.data))
+      .catch((err) => console.log(err));
+
+    // const params = {
+    //   tag: tag,
+    //   keyword: keyword,
+    // };
+    // VegasGet('/api/common/search_main', params)
+    //   .then((res) => setSearchLists(res.data))
+    //   .catch((err) => console.log(err));
+  }, [tag, keyword]);
 
   // ToTop 스크롤
-  const scrollRef = useRef()
+  const scrollRef = useRef();
   const onPressTouch = () => {
     scrollRef.current?.scrollTo({
       y: 0,
-      animated: true
-    })
+      animated: true,
+    });
   };
 
-  console.log('searchLists :::::::', searchLists)
+  console.log('searchLists :::::::', searchLists);
 
-  const renderItem = ({ item }) => {
-    console.log('renderItem list :;', item)
+  const renderItem = ({item}) => {
+    console.log('renderItem list :;', item);
 
     return item.talk ? (
       <TouchableOpacity
@@ -100,11 +90,11 @@ const SearchList = (props) => {
             tk_content: item.talk.tk_content,
             files: item.talk.files,
             // wo_count: item.talk.wo_count, API에서 넘어오지 않음
-            ar_updated_at: item.ar_updated_at
-          })}
-        activeOpacity={1}
-      >
-        <View style={styles.contentBlock} style={{ marginVertical: 10 }}>
+            ar_updated_at: item.ar_updated_at,
+          })
+        }
+        activeOpacity={1}>
+        <View style={styles.contentBlock} style={{marginVertical: 10}}>
           <View>
             {item.talk.files.length > 1 ? (
               <Swiper
@@ -112,12 +102,11 @@ const SearchList = (props) => {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  height: Dimensions.get('window').width / 2.65
+                  height: Dimensions.get('window').width / 2.65,
                 }}
-                dotColor='#rgba(255,255,255,0.7)'
-                activeDotColor='#4A26F4'
-                paginationStyle={{ bottom: 10 }}
-              >
+                dotColor="#rgba(255,255,255,0.7)"
+                activeDotColor="#4A26F4"
+                paginationStyle={{bottom: 10}}>
                 {item.talk.files.map((file) => (
                   <TouchableOpacity
                     key={file.ft_id}
@@ -133,22 +122,22 @@ const SearchList = (props) => {
                         ut_image: item.talk.user.ut_image,
                         tk_content: item.talk.tk_content,
                         files: item.talk.files,
-                        ar_updated_at: item.ar_updated_at
-                      })}
+                        ar_updated_at: item.ar_updated_at,
+                      })
+                    }
                     style={{
                       borderTopRightRadius: 10,
                       borderTopLeftRadius: 10,
-                      overflow: 'hidden'
-                    }}
-                  >
+                      overflow: 'hidden',
+                    }}>
                     <Image
                       source={{
-                        uri: `${baseUrl}/${file.ft_file_path}`
+                        uri: `${BASE_URL}/${file.ft_file_path}`,
                       }}
-                      resizeMode='cover'
+                      resizeMode="cover"
                       style={{
                         width: Dimensions.get('window').width - 40,
-                        height: Dimensions.get('window').width / 2.65
+                        height: Dimensions.get('window').width / 2.65,
                       }}
                     />
                   </TouchableOpacity>
@@ -158,14 +147,14 @@ const SearchList = (props) => {
               <View>
                 <Image
                   source={{
-                    uri: `${baseUrl}/${item.talk.files[0].ft_file_path}`
+                    uri: `${BASE_URL}/${item.talk.files[0].ft_file_path}`,
                   }}
-                  resizeMode='cover'
+                  resizeMode="cover"
                   style={{
                     width: '100%',
                     height: width / 2.65,
                     borderTopRightRadius: 10,
-                    borderTopLeftRadius: 10
+                    borderTopLeftRadius: 10,
                   }}
                 />
               </View>
@@ -180,24 +169,21 @@ const SearchList = (props) => {
               borderTopLeftRadius: item.talk.files.length > 0 ? 0 : 10,
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
-              padding: 15
-            }}
-          >
+              padding: 15,
+            }}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: 10
-              }}
-            >
+                marginBottom: 10,
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
-                  alignItems: 'center'
-                }}
-              >
+                  alignItems: 'center',
+                }}>
                 {item.ar_tag_travel == '1' ? (
                   <View style={styles.tags}>
                     <Text style={styles.tagsText}>여행</Text>
@@ -225,9 +211,8 @@ const SearchList = (props) => {
                 style={{
                   fontSize: 14,
                   fontWeight: 'bold',
-                  color: '#000'
-                }}
-              >
+                  color: '#000',
+                }}>
                 by {item.talk.user.ut_nickname}
               </Text>
               {/* // 유저 닉네임 */}
@@ -236,19 +221,17 @@ const SearchList = (props) => {
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
+                alignItems: 'center',
+              }}>
               <Text
                 style={{
                   flex: 1,
                   flexWrap: 'wrap',
                   fontSize: 16,
                   fontWeight: 'bold',
-                  color: '#222'
+                  color: '#222',
                 }}
-                numberOfLines={1}
-              >
+                numberOfLines={1}>
                 {item.talk.tk_content}
               </Text>
               {item.talk.tk_user_id === userId ? (
@@ -261,16 +244,14 @@ const SearchList = (props) => {
                     borderWidth: 1,
                     borderColor: '#eaeaea',
                     backgroundColor: '#fff',
-                    borderRadius: 10
-                  }}
-                >
+                    borderRadius: 10,
+                  }}>
                   <Text
                     style={{
                       fontSize: 12,
                       color: '#666666',
-                      letterSpacing: -1
-                    }}
-                  >
+                      letterSpacing: -1,
+                    }}>
                     내가 쓴 글
                   </Text>
                 </View>
@@ -280,42 +261,41 @@ const SearchList = (props) => {
         </View>
       </TouchableOpacity>
     ) : item.curation ? (
-      <View key={item.ar_id} style={{ marginVertical: 10 }}>
+      <View key={item.ar_id} style={{marginVertical: 10}}>
         {item.curation.files.length > 1 ? (
           <Swiper
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              height: Dimensions.get('window').width / 2.65
+              height: Dimensions.get('window').width / 2.65,
             }}
             automaticallyAdjustContentInsets
-            dotColor='#rgba(255,255,255,0.7)'
-            activeDotColor='#4A26F4'
-            paginationStyle={{ bottom: 10 }}
-          >
+            dotColor="#rgba(255,255,255,0.7)"
+            activeDotColor="#4A26F4"
+            paginationStyle={{bottom: 10}}>
             {item.curation.files.map((file) => (
               <TouchableOpacity
                 key={file.ft_id}
                 onPress={() =>
                   navigation.navigate('CurationDetail', {
                     title: item.curation.cu_title,
-                    id: item.curation.cu_id
-                  })}
+                    id: item.curation.cu_id,
+                  })
+                }
                 activeOpacity={1}
                 style={{
                   borderTopRightRadius: 10,
                   borderTopLeftRadius: 10,
-                  overflow: 'hidden'
-                }}
-              >
+                  overflow: 'hidden',
+                }}>
                 <Image
                   source={{
-                    uri: `${baseUrl}/${file.ft_file_path}`
+                    uri: `${BASE_URL}/${file.ft_file_path}`,
                   }}
-                  resizeMode='cover'
+                  resizeMode="cover"
                   style={{
                     width: Dimensions.get('window').width - 40,
-                    height: Dimensions.get('window').width / 2.65
+                    height: Dimensions.get('window').width / 2.65,
                   }}
                 />
               </TouchableOpacity>
@@ -326,20 +306,20 @@ const SearchList = (props) => {
             onPress={() =>
               navigation.navigate('CurationDetail', {
                 title: item.curation.cu_title,
-                id: item.curation.cu_id
-              })}
-            activeOpacity={1}
-          >
+                id: item.curation.cu_id,
+              })
+            }
+            activeOpacity={1}>
             <Image
               source={{
-                uri: `${baseUrl}/${item.curation.files[0].ft_file_path}`
+                uri: `${BASE_URL}/${item.curation.files[0].ft_file_path}`,
               }}
-              resizeMode='cover'
+              resizeMode="cover"
               style={{
                 width: '100%',
                 height: width / 2.65,
                 borderTopRightRadius: 10,
-                borderTopLeftRadius: 10
+                borderTopLeftRadius: 10,
               }}
             />
           </TouchableOpacity>
@@ -349,34 +329,31 @@ const SearchList = (props) => {
           onPress={() =>
             navigation.navigate('CurationDetail', {
               title: item.curation.cu_title,
-              id: item.curation.cu_id
-            })}
-          activeOpacity={1}
-        >
+              id: item.curation.cu_id,
+            })
+          }
+          activeOpacity={1}>
           <View
             style={{
               borderWidth: 1,
               borderColor: '#eee',
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
-              padding: 15
-            }}
-          >
+              padding: 15,
+            }}>
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: 10
-              }}
-            >
+                marginBottom: 10,
+              }}>
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
-                  alignItems: 'center'
-                }}
-              >
+                  alignItems: 'center',
+                }}>
                 {item.ar_tag_travel == '1' ? (
                   <View style={styles.tags}>
                     <Text style={styles.tagsText}>여행</Text>
@@ -399,17 +376,16 @@ const SearchList = (props) => {
                 ) : null}
               </View>
               <View>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{flexDirection: 'row'}}>
                   <Text
                     style={{
                       fontSize: 14,
                       color: '#4A26F4',
-                      marginRight: 5
-                    }}
-                  >
+                      marginRight: 5,
+                    }}>
                     새소식
                   </Text>
-                  <Text style={{ fontSize: 14, color: '#000' }}>베가스통</Text>
+                  <Text style={{fontSize: 14, color: '#000'}}>베가스통</Text>
                 </View>
               </View>
             </View>
@@ -419,10 +395,9 @@ const SearchList = (props) => {
                 flexWrap: 'wrap',
                 fontSize: 16,
                 fontWeight: 'bold',
-                color: '#222'
+                color: '#222',
               }}
-              numberOfLines={1}
-            >
+              numberOfLines={1}>
               {item.curation.cu_title}
             </Text>
           </View>
@@ -430,41 +405,40 @@ const SearchList = (props) => {
         {/* // 새소식 - 관리자(베가스통) 프로필 띄우기 */}
       </View>
     ) : item.trip ? (
-      <View key={item.ar_id} style={{ marginVertical: 10 }}>
+      <View key={item.ar_id} style={{marginVertical: 10}}>
         {item.trip.files.length > 1 ? (
           <Swiper
             style={{
               justifyContent: 'center',
               alignItems: 'center',
-              height: Dimensions.get('window').width / 2.65
+              height: Dimensions.get('window').width / 2.65,
             }}
-            dotColor='#rgba(255,255,255,0.7)'
-            activeDotColor='#4A26F4'
-            paginationStyle={{ bottom: 10 }}
-          >
+            dotColor="#rgba(255,255,255,0.7)"
+            activeDotColor="#4A26F4"
+            paginationStyle={{bottom: 10}}>
             {item.trip.files.map((file) => (
               <TouchableOpacity
                 key={file.ft_id}
                 onPress={() =>
                   navigation.navigate('TripDetail', {
-                    id: item.trip.tr_id
-                  })}
+                    id: item.trip.tr_id,
+                  })
+                }
                 activeOpacity={1}
                 style={{
                   marginBottom: 20,
                   borderTopRightRadius: 10,
                   borderTopLeftRadius: 10,
-                  overflow: 'hidden'
-                }}
-              >
+                  overflow: 'hidden',
+                }}>
                 <Image
                   source={{
-                    uri: `${baseUrl}/${file.ft_file_path}`
+                    uri: `${BASE_URL}/${file.ft_file_path}`,
                   }}
-                  resizeMode='cover'
+                  resizeMode="cover"
                   style={{
                     width: Dimensions.get('window').width - 40,
-                    height: Dimensions.get('window').width / 2.65
+                    height: Dimensions.get('window').width / 2.65,
                   }}
                 />
               </TouchableOpacity>
@@ -474,20 +448,20 @@ const SearchList = (props) => {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('TripDetail', {
-                id: item.trip.tr_id
-              })}
-            activeOpacity={1}
-          >
+                id: item.trip.tr_id,
+              })
+            }
+            activeOpacity={1}>
             <Image
               source={{
-                uri: `${baseUrl}/${item.trip.files[0].ft_file_path}`
+                uri: `${BASE_URL}/${item.trip.files[0].ft_file_path}`,
               }}
-              resizeMode='cover'
+              resizeMode="cover"
               style={{
                 width: '100%',
                 height: width / 2.65,
                 borderTopRightRadius: 10,
-                borderTopLeftRadius: 10
+                borderTopLeftRadius: 10,
               }}
             />
           </TouchableOpacity>
@@ -496,30 +470,28 @@ const SearchList = (props) => {
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('TripDetail', {
-              id: item.trip.tr_id
-            })}
-          activeOpacity={1}
-        >
+              id: item.trip.tr_id,
+            })
+          }
+          activeOpacity={1}>
           <View
             style={{
               borderWidth: 1,
               borderColor: '#eee',
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
-              padding: 15
-            }}
-          >
-            <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+              padding: 15,
+            }}>
+            <View style={{flexDirection: 'row', marginBottom: 5}}>
               <Text
                 style={{
                   fontSize: 14,
                   color: '#4A26F4',
-                  marginRight: 5
-                }}
-              >
+                  marginRight: 5,
+                }}>
                 베가스여행
               </Text>
-              <Text style={{ fontSize: 14, color: '#000' }}>베가스통</Text>
+              <Text style={{fontSize: 14, color: '#000'}}>베가스통</Text>
             </View>
             <Text
               style={{
@@ -527,17 +499,16 @@ const SearchList = (props) => {
                 flexWrap: 'wrap',
                 fontSize: 16,
                 fontWeight: 'bold',
-                color: '#222'
+                color: '#222',
               }}
-              numberOfLines={1}
-            >
+              numberOfLines={1}>
               {item.trip.tr_name}
             </Text>
           </View>
         </TouchableOpacity>
         {/* // 새소식 - 관리자(베가스통) 프로필 띄우기 */}
       </View>
-    ) : null
+    ) : null;
   };
 
   return (
@@ -550,22 +521,20 @@ const SearchList = (props) => {
             justifyContent: 'flex-start',
             alignItems: 'center',
             marginTop: 10,
-            paddingHorizontal: 20
-          }}
-        >
+            paddingHorizontal: 20,
+          }}>
           <Travel navigation={navigation} isActive={tag === 'travel'} />
           <Restaurant navigation={navigation} isActive={tag === 'restaurant'} />
           <Cafe navigation={navigation} isActive={tag === 'cafe'} />
           <Shopping navigation={navigation} isActive={tag === 'shop'} />
         </View>
         {keyword || tag ? (
-          <View style={{ marginVertical: 12, paddingHorizontal: 20 }}>
+          <View style={{marginVertical: 12, paddingHorizontal: 20}}>
             <Text
               style={{
                 fontSize: 20,
-                fontWeight: 'bold'
-              }}
-            >
+                fontWeight: 'bold',
+              }}>
               {keyword ? `#${keyword}` : null}{' '}
               {tag
                 ? `#${
@@ -583,9 +552,9 @@ const SearchList = (props) => {
             </Text>
           </View>
         ) : (
-          <View style={{ marginBottom: 10 }} />
+          <View style={{marginBottom: 10}} />
         )}
-        <View style={{ flex: 1, paddingHorizontal: 20 }}>
+        <View style={{flex: 1, paddingHorizontal: 20}}>
           <FlatList
             data={searchLists}
             renderItem={renderItem}
@@ -597,10 +566,9 @@ const SearchList = (props) => {
                   flex: 1,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  minHeight: 200
-                }}
-              >
-                <Text style={{ fontSize: 14 }}>검색 결과가 없습니다.</Text>
+                  minHeight: 200,
+                }}>
+                <Text style={{fontSize: 14}}>검색 결과가 없습니다.</Text>
               </View>
             }
           />
@@ -609,7 +577,7 @@ const SearchList = (props) => {
 
       <TouchableOpacity
         activeOpacity={1}
-        hitSlop={{ top: 5, right: 5, bottom: 5, left: 5 }}
+        hitSlop={{top: 5, right: 5, bottom: 5, left: 5}}
         onPress={onPressTouch}
         style={{
           position: 'absolute',
@@ -623,23 +591,21 @@ const SearchList = (props) => {
           backgroundColor: '#fff',
           paddingHorizontal: 20,
           paddingVertical: 2,
-          marginBottom: 20
-        }}
-      >
+          marginBottom: 20,
+        }}>
         <Text
           style={{
             fontSize: 18,
             fontWeight: 'bold',
             color: '#222222',
-            marginBottom: 2
-          }}
-        >
+            marginBottom: 2,
+          }}>
           Top
         </Text>
       </TouchableOpacity>
       <BottomTabs navigation={navigation} routeName={routeName} />
     </>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -647,7 +613,7 @@ const styles = StyleSheet.create({
     width: window,
     height: 180,
     borderRadius: 15,
-    marginBottom: 20
+    marginBottom: 20,
   },
   tags: {
     justifyContent: 'center',
@@ -657,13 +623,13 @@ const styles = StyleSheet.create({
     borderColor: '#E8EBFF',
     paddingHorizontal: 15,
     paddingVertical: 5,
-    marginRight: 5
+    marginRight: 5,
   },
   tagsText: {
     fontSize: 12,
-    color: '#4A26F4'
+    color: '#4A26F4',
   },
-  contentBlock: {}
-})
+  contentBlock: {},
+});
 
-export default SearchList
+export default SearchList;

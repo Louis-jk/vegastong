@@ -14,11 +14,10 @@ import {
   TouchableOpacity,
   TouchableHighlight,
 } from 'react-native-gesture-handler';
+import Config from 'react-native-config';
 
 import {useSelector, useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import qs from 'qs';
-import axios from 'axios';
 import {setToken, setDrawer} from '../Module/Reducer';
 import {
   userInfoId,
@@ -41,7 +40,7 @@ import {
   useIsDrawerOpen,
 } from '@react-navigation/drawer';
 
-const baseUrl = 'https://dmonster1826.cafe24.com';
+const BASE_URL = Config.BASE_URL;
 
 const DrawerMenu = (props) => {
   const navigation = props.navigation;
@@ -203,7 +202,7 @@ const DrawerMenu = (props) => {
               userImage ? (
                 <Thumbnail
                   source={{
-                    uri: `${baseUrl}${userImage}`,
+                    uri: `${BASE_URL}${userImage}`,
                   }}
                   style={{
                     width: 80,

@@ -14,19 +14,18 @@ import {Container, Content, Thumbnail} from 'native-base';
 import {useSelector} from 'react-redux';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import AsyncStorage from '@react-native-community/async-storage';
+import Config from 'react-native-config';
 import 'moment/locale/ko';
 import moment from 'moment';
 import BottomTabs from '../Common/BottomTabs';
 import SearchBar from '../Common/SearchBar';
 
 import {ScrollView} from 'react-native-gesture-handler';
-import axios from 'axios';
 import qs from 'qs';
+import {VegasPost} from '../../utils/axios.config';
 
+const BASE_URL = Config.BASE_URL;
 const {window} = Dimensions.get('window');
-
-// const baseUrl = 'https://gongjuro.com';
-const baseUrl = 'https://dmonster1826.cafe24.com';
 
 const Event = (props) => {
   const navigation = props.navigation;
@@ -39,22 +38,17 @@ const Event = (props) => {
 
   const getEventAPI = async () => {
     try {
-      const res = await axios({
-        method: 'post',
-        url: `${baseUrl}/api/talk/get_talks`,
-        data: qs.stringify({
+      const res = await VegasPost(
+        '/api/talk/get_talks',
+        qs.stringify({
           tk_division: 'event',
           page: fetchingStatus ? reviewCurrentPage + 1 : false,
         }),
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-      });
+      );
 
-      if (res.data.result === 'success') {
-        setEvents(events.concat(res.data.data));
-        setFetchingStatus(res.data.data.length !== 0);
+      if (res.result === 'success') {
+        setEvents(events.concat(res.data));
+        setFetchingStatus(res.data.length !== 0);
         setIsLoading(false);
         setReviewCurrentPage(reviewCurrentPage + 1);
       } else {
@@ -67,8 +61,6 @@ const Event = (props) => {
     }
   };
 
-  console.log('events : ', events);
-
   useEffect(() => {
     getEventAPI();
     foucsNav();
@@ -80,7 +72,7 @@ const Event = (props) => {
     });
   };
 
-  const e_handleScroll = (e) => {
+  const eventHandleScroll = (e) => {
     const scrollY =
       e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
     if (scrollY >= e.nativeEvent.contentSize.height - 250) {
@@ -167,7 +159,7 @@ const Event = (props) => {
                 ) : (
                   <Thumbnail
                     source={{
-                      uri: `${baseUrl}/${item.ut_image}`,
+                      uri: `${BASE_URL}/${item.ut_image}`,
                     }}
                     style={styles.thumbnailStyle}
                     resizeMode="cover"
@@ -250,7 +242,7 @@ const Event = (props) => {
                     <Image
                       key={idx}
                       source={{
-                        uri: `${baseUrl}/${file.ft_file_path}`,
+                        uri: `${BASE_URL}/${file.ft_file_path}`,
                       }}
                       resizeMode="cover"
                       style={{
@@ -325,7 +317,7 @@ const Event = (props) => {
         ref={FlatListRef}
         renderItem={eventRenderRow}
         keyExtractor={(list, index) => index.toString()}
-        onScroll={fetchingStatus ? (event) => e_handleScroll(event) : false}
+        onScroll={fetchingStatus ? (event) => eventHandleScroll(event) : false}
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
         scrollEnabled
@@ -355,22 +347,17 @@ const Question = (props) => {
   const [reviewCurrentPage, setReviewCurrentPage] = useState(0);
 
   const getQuestionAPI = async () => {
-    await axios({
-      method: 'post',
-      url: `${baseUrl}/api/talk/get_talks`,
-      data: qs.stringify({
+    await VegasPost(
+      '/api/talk/get_talks',
+      qs.stringify({
         tk_division: 'question',
         page: fetchingStatus ? reviewCurrentPage + 1 : false,
       }),
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-    })
+    )
       .then((res) => {
-        if (res.data.result === 'success') {
-          setQuestions(questions.concat(res.data.data));
-          setFetchingStatus(res.data.data.length !== 0);
+        if (res.result === 'success') {
+          setQuestions(questions.concat(res.data));
+          setFetchingStatus(res.data.length !== 0);
           setIsLoading(false);
           setReviewCurrentPage(reviewCurrentPage + 1);
         } else {
@@ -393,7 +380,7 @@ const Question = (props) => {
     });
   };
 
-  const q_handleScroll = (e) => {
+  const questionHandleScroll = (e) => {
     const scrollY =
       e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
     if (scrollY >= e.nativeEvent.contentSize.height - 250) {
@@ -477,7 +464,7 @@ const Question = (props) => {
               ) : (
                 <Thumbnail
                   source={{
-                    uri: `${baseUrl}/${item.ut_image}`,
+                    uri: `${BASE_URL}/${item.ut_image}`,
                   }}
                   style={styles.thumbnailStyle}
                   resizeMode="cover"
@@ -560,7 +547,7 @@ const Question = (props) => {
                   <Image
                     key={idx}
                     source={{
-                      uri: `${baseUrl}/${file.ft_file_path}`,
+                      uri: `${BASE_URL}/${file.ft_file_path}`,
                     }}
                     resizeMode="cover"
                     style={{
@@ -635,7 +622,9 @@ const Question = (props) => {
         ref={FlatListRef}
         renderItem={questionRenderRow}
         keyExtractor={(list, index) => index.toString()}
-        onScroll={fetchingStatus ? (event) => q_handleScroll(event) : false}
+        onScroll={
+          fetchingStatus ? (event) => questionHandleScroll(event) : false
+        }
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
         scrollEnabled
@@ -678,23 +667,18 @@ const Review = (props) => {
   const getTalkReviews = async () => {
     console.log('fetchingStatus : ', fetchingStatus);
 
-    await axios({
-      method: 'post',
-      url: `${baseUrl}/api/talk/get_talks`,
-      data: qs.stringify({
+    await VegasPost(
+      '/api/talk/get_talks',
+      qs.stringify({
         tk_division: 'review',
         page: fetchingStatus ? reviewCurrentPage : false,
       }),
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-    })
+    )
       .then((res) => {
         console.log('page : ', reviewCurrentPage);
-        if (res.data.result === 'success') {
-          setReviews(reviews.concat(res.data.data));
-          setFetchingStatus(res.data.data.length !== 0);
+        if (res.result === 'success') {
+          setReviews(reviews.concat(res.data));
+          setFetchingStatus(res.data.length !== 0);
           setIsLoading(false);
           setReviewCurrentPage(reviewCurrentPage + 1);
         } else {
@@ -717,7 +701,7 @@ const Review = (props) => {
     });
   };
 
-  const r_handleScroll = (e) => {
+  const reviewHandleScroll = (e) => {
     const scrollY =
       e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
     if (
@@ -796,7 +780,7 @@ const Review = (props) => {
               ) : (
                 <Thumbnail
                   source={{
-                    uri: `${baseUrl}/${item.ut_image}`,
+                    uri: `${BASE_URL}/${item.ut_image}`,
                   }}
                   style={styles.thumbnailStyle}
                   resizeMode="cover"
@@ -879,7 +863,7 @@ const Review = (props) => {
                   <Image
                     key={idx}
                     source={{
-                      uri: `${baseUrl}/${file.ft_file_path}`,
+                      uri: `${BASE_URL}/${file.ft_file_path}`,
                     }}
                     resizeMode="cover"
                     style={{
@@ -968,7 +952,7 @@ const Review = (props) => {
         ref={FlatListRef}
         renderItem={reviewRenderRow}
         keyExtractor={(list, index) => index.toString()}
-        onScroll={(event) => r_handleScroll(event)}
+        onScroll={(event) => reviewHandleScroll(event)}
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
         scrollEnabled

@@ -13,10 +13,9 @@ import {useSelector, useDispatch} from 'react-redux';
 import Modal from 'react-native-modal';
 import Header from '../Common/Header';
 import qs from 'qs';
-import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
 
-const baseUrl = 'https://dmonster1826.cafe24.com';
+import AsyncStorage from '@react-native-community/async-storage';
+import {VegasPost} from '../../utils/axios.config';
 
 const RegisterStep02Screen = (props) => {
   const navigation = props.navigation;
@@ -81,10 +80,9 @@ const RegisterStep02Screen = (props) => {
       ]);
     } else if (params.reg_route === 'reJoin') {
       try {
-        const join = await axios({
-          method: 'post',
-          url: `${baseUrl}/api/user/rejoin_app`,
-          data: qs.stringify({
+        const join = await VegasPost(
+          '/api/user/rejoin_app',
+          qs.stringify({
             ut_join_type: ut_join_type,
             ut_social_id: ut_social_id,
             ut_nickname,
@@ -94,18 +92,13 @@ const RegisterStep02Screen = (props) => {
             ut_address,
             ut_address_detail,
           }),
-          headers: {
-            'api-secret':
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-          },
-        });
-        console.log(join);
+        );
 
-        if (join.data.result === 'success') {
-          await AsyncStorage.setItem('@vegasTongToken', join.data.data.token);
+        if (join.result === 'success') {
+          await AsyncStorage.setItem('@vegasTongToken', join.data.token);
           navigation.navigate('register_step03', {
             title: '회원가입 완료',
-            id: join.data.data.user.ut_id,
+            id: join.data.user.ut_id,
           });
         }
       } catch (e) {
@@ -113,10 +106,9 @@ const RegisterStep02Screen = (props) => {
       }
     } else {
       try {
-        const join = await axios({
-          method: 'post',
-          url: `${baseUrl}/api/user/join`,
-          data: qs.stringify({
+        const join = await VegasPost(
+          '/api/user/join',
+          qs.stringify({
             ut_join_type: ut_join_type,
             ut_social_id: ut_social_id,
             ut_nickname,
@@ -126,18 +118,13 @@ const RegisterStep02Screen = (props) => {
             ut_address,
             ut_address_detail,
           }),
-          headers: {
-            'api-secret':
-              'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-          },
-        });
-        console.log(join);
-        const data = join.data.data;
-        if (join.data.result === 'success') {
-          await AsyncStorage.setItem('@vegasTongToken', join.data.data.token);
+        );
+
+        if (join.result === 'success') {
+          await AsyncStorage.setItem('@vegasTongToken', join.data.token);
           navigation.navigate('register_step03', {
             title: '회원가입 완료',
-            id: join.data.data.user.ut_id,
+            id: join.data.user.ut_id,
           });
         }
       } catch (e) {
@@ -152,10 +139,9 @@ const RegisterStep02Screen = (props) => {
         {text: '확인', onPress: () => {}},
       ]);
     } else {
-      await axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/join`,
-        data: qs.stringify({
+      await VegasPost(
+        '/api/user/join',
+        qs.stringify({
           ut_join_type,
           ut_user_id,
           ut_nickname,
@@ -166,15 +152,11 @@ const RegisterStep02Screen = (props) => {
           ut_address,
           ut_address_detail,
         }),
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-      })
+      )
         .then((res) =>
-          res.data.data.result == 'success'
-            ? AsyncStorage.setItem('@vegasTongToken', res.data.data.data.token)
-            : console.log(res.data.data.error),
+          res.data.result == 'success'
+            ? AsyncStorage.setItem('@vegasTongToken', res.data.data.token)
+            : console.log(res.data.error),
         )
         .then(
           navigation.navigate('register_step03', {

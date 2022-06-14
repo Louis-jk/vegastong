@@ -11,10 +11,8 @@ import {
 import {Container, Content} from 'native-base';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import qs from 'qs';
-import axios from 'axios';
 import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
-import {useScrollToTop} from '@react-navigation/native';
 
 // import KakaoSDK from '@actbase/react-native-kakaosdk';
 // import RNKakaoTest from 'react-native-kakao-test';
@@ -24,15 +22,9 @@ import ShareButton from '../Common/ShareButton';
 import ReplyCount from '../Common/ReplyCount';
 import ReplyForm from '../Common/ReplyForm';
 import Reply from '../Reply';
-
-const {window} = Dimensions.get('window');
-
-// const baseUrl = 'https://gongjuro.com'
-const baseUrl = 'https://dmonster1826.cafe24.com';
+import {VegasGet, VegasPost} from '../../utils/axios.config';
 
 const CurationDetail = (props) => {
-  // console.log('Curation Detail props : ', props);
-
   const navigation = props.navigation;
   const title = props.route.params.title;
   const cuId = props.route.params.id;
@@ -56,18 +48,12 @@ const CurationDetail = (props) => {
   const containerRef = useRef(null);
 
   const getApi = () => {
-    axios({
-      method: 'get',
-      url: `${baseUrl}/api/curation/get_curation/${cuId}`,
-      headers: {
-        authorization: token,
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
+    VegasGet(`/api/curation/get_curation/${cuId}`, {
+      headers: {authorization: `${token}`},
     })
       .then((res) => {
-        if (res.data.result === 'success') {
-          setCurationLists(res.data.data);
+        if (res.result === 'success') {
+          setCurationLists(res.data);
         }
       })
       .catch((err) => console.log(err));
@@ -78,22 +64,12 @@ const CurationDetail = (props) => {
   // 해당 페이지 전체 댓글 불러오기
   const [replyLists, setReplyLists] = useState([]);
   const getReplyAPI = () => {
-    axios({
-      method: 'get',
-      url: `${baseUrl}/api/word/get_words`,
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-      params: {
-        wo_category: 'curation',
-        wo_ref_id: cuId,
-        page: 1,
-      },
-    })
+    VegasGet(
+      `/api/word/get_words?wo_category=curation&wo_ref_id=${cuId}&page=1`,
+    )
       .then((res) => {
-        if (res.data.result === 'success') {
-          setReplyLists(res.data.data);
+        if (res.result === 'success') {
+          setReplyLists(res.data);
         }
       })
       .catch((err) => console.log(err));
@@ -102,19 +78,15 @@ const CurationDetail = (props) => {
   // 내 스크랩 불러오기
   const [myScraps, setMyScraps] = useState([]);
   const getMyScrap = () => {
-    axios({
-      method: 'post',
-      url: `${baseUrl}/api/user/get_my_scraps`,
-      headers: {
-        authorization: token,
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-    })
+    VegasPost(
+      '/api/user/get_my_scraps',
+      {},
+      {headers: {authorization: `${token}`}},
+    )
       .then((res) => {
-        if (res.data.result === 'success') {
-          // setMyScraps(res.data.data.scraps); 수정
-          const matchedScrap = res.data.data.scraps.find(
+        if (res.result === 'success') {
+          // setMyScraps(res.data.scraps); 수정
+          const matchedScrap = res.data.scraps.find(
             (ms) => ms.sc_curation_id == cuId,
           );
           if (matchedScrap.length !== 0) {
@@ -143,21 +115,16 @@ const CurationDetail = (props) => {
 
   const toggleScrap = () => {
     if (curationLists.my_scrap === 0 || curationLists.my_scrap === null) {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/add_scrap`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-        data: qs.stringify({
+      VegasPost(
+        '/api/user/add_scrap',
+        qs.stringify({
           sc_category: 'curation',
           sc_ref_id: cuId,
         }),
-      })
+        {headers: {authorization: `${token}`}},
+      )
         .then((res) => {
-          if (res.data.result === 'success') {
+          if (res.result === 'success') {
             getApi();
           }
         })
@@ -166,17 +133,13 @@ const CurationDetail = (props) => {
       curationLists.my_scrap !== 0 ||
       curationLists.my_scrap !== null
     ) {
-      axios({
-        method: 'post',
-        url: `${baseUrl}/api/user/remove_scrap/${curationLists.my_scrap.sc_id}`,
-        headers: {
-          authorization: token,
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-        },
-      })
+      VegasPost(
+        `/api/user/remove_scrap/${curationLists.my_scrap.sc_id}`,
+        {},
+        {headers: {authorization: `${token}`}},
+      )
         .then((res) => {
-          if (res.data.result === 'success') {
+          if (res.result === 'success') {
             getApi();
           }
         })
@@ -187,17 +150,11 @@ const CurationDetail = (props) => {
   };
 
   const DelOK = (e) => {
-    axios({
-      method: 'get',
-      url: `${baseUrl}/api/word/remove_word/${e}`,
-      headers: {
-        authorization: token,
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
+    VegasGet(`/api/word/remove_word/${e}`, {
+      headers: {authorization: `${token}`},
     })
       .then((res) => {
-        if (res.data.result === 'success') {
+        if (res.result === 'success') {
           Alert.alert(
             '작성하신 댓글이 삭제되었습니다.',
             '이 페이지에 머무르시겠습니까?',
@@ -245,20 +202,15 @@ const CurationDetail = (props) => {
   };
 
   const addLikeBtn = () => {
-    axios({
-      method: 'post',
-      url: `${baseUrl}/api/curation/toggle_favor/`,
-      headers: {
-        authorization: token,
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-      data: qs.stringify({
+    VegasPost(
+      '/api/curation/toggle_favor/',
+      qs.stringify({
         cuId,
       }),
-    })
+      {headers: {authorization: `${token}`}},
+    )
       .then((res) => {
-        if (res.data.result === 'success') {
+        if (res.result === 'success') {
           getApi();
         }
       })

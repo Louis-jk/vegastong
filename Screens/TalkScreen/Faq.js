@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -7,8 +7,8 @@ import {
   ScrollView,
   ImageBackground,
   Alert,
-  Dimensions,
-} from 'react-native';
+  Dimensions
+} from 'react-native'
 import {
   Container,
   Content,
@@ -16,44 +16,41 @@ import {
   Textarea,
   Form,
   Item,
-  Button,
-} from 'native-base';
+  Button
+} from 'native-base'
 
-import Modal from 'react-native-modal';
-import ImagePicker from 'react-native-image-crop-picker';
-import {useSelector} from 'react-redux';
-import qs from 'qs';
-import axios from 'axios';
-import Header from '../Common/Header';
-
-const baseUrl = 'https://dmonster1826.cafe24.com';
-// const baseUrl = 'http://192.168.0.84';
+import Modal from 'react-native-modal'
+import ImagePicker from 'react-native-image-crop-picker'
+import { useSelector } from 'react-redux'
+import qs from 'qs'
+import Header from '../Common/Header'
+import { VegasPost } from '../../utils/axios.config'
 
 const Faq = (props) => {
-  const title = props.route.params.title;
-  const navigation = props.navigation;
+  const title = props.route.params.title
+  const navigation = props.navigation
 
   // Redux 연동
-  const token = useSelector((state) => state.Reducer.token);
+  const token = useSelector((state) => state.Reducer.token)
 
-  const [checked, setChecked] = useState('question');
-  const [checkedDivision, setCheckedDivision] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [checked, setChecked] = useState('question')
+  const [checkedDivision, setCheckedDivision] = useState(null)
+  const [isModalVisible, setModalVisible] = useState(false)
   const [isImagePickerModalVisible, setImagePickerModalVisible] =
-    useState(false);
-  const [isTagTravel, setTagTravel] = useState(false);
-  const [isTagRestaurant, setTagRestaurant] = useState(false);
-  const [isTagCafe, setTagCafe] = useState(false);
-  const [isTagShop, setTagShop] = useState(false);
-  const [talkContent, setTalkContent] = useState(null);
-  const [talkUploadImage, setTalkUploadImage] = useState([]);
-  const [sendServerImage, setSendServerImage] = useState([]);
+    useState(false)
+  const [isTagTravel, setTagTravel] = useState(false)
+  const [isTagRestaurant, setTagRestaurant] = useState(false)
+  const [isTagCafe, setTagCafe] = useState(false)
+  const [isTagShop, setTagShop] = useState(false)
+  const [talkContent, setTalkContent] = useState(null)
+  const [talkUploadImage, setTalkUploadImage] = useState([])
+  const [sendServerImage, setSendServerImage] = useState([])
 
-  const toggleModal = () => setModalVisible(!isModalVisible);
+  const toggleModal = () => setModalVisible(!isModalVisible)
   const setCheckedLocal = (v) => {
-    setChecked(v);
+    setChecked(v)
     // ReactNativeWebView.sendMessage(JSON.stringify(checked));
-    toggleModal();
+    toggleModal()
   };
 
   const checkPhotos = () => {
@@ -64,16 +61,16 @@ const Faq = (props) => {
         [
           {
             text: '확인',
-            onPress: () => {},
-          },
-        ],
-      );
+            onPress: () => {}
+          }
+        ]
+      )
     }
-    console.log('talkUploadImage ::::::::::', talkUploadImage);
+    console.log('talkUploadImage ::::::::::', talkUploadImage)
     if (talkUploadImage.length < 5) {
-      setImagePickerModalVisible(true);
+      setImagePickerModalVisible(true)
     }
-  };
+  }
 
   const photoCountErr = () => {
     Alert.alert(
@@ -82,13 +79,13 @@ const Faq = (props) => {
       [
         {
           text: '확인',
-          onPress: () => {},
-        },
-      ],
-    );
+          onPress: () => {}
+        }
+      ]
+    )
   };
 
-  const [talkPhoto, setTalkPhoto] = useState([]);
+  const [talkPhoto, setTalkPhoto] = useState([])
 
   const importPhoto = () => {
     ImagePicker.openPicker({
@@ -102,13 +99,13 @@ const Faq = (props) => {
       includeExif: true,
       useFrontCamera: false,
       includeBase64: true,
-      cropping: true,
+      cropping: true
     })
       .then((images) => {
         if (images.length > 5) {
-          photoCountErr();
+          photoCountErr()
         } else if (images.length + talkUploadImage.length > 5) {
-          photoCountErr();
+          photoCountErr()
         } else {
           setTalkUploadImage((prev) =>
             prev.concat(
@@ -120,30 +117,30 @@ const Faq = (props) => {
                   path: i.path,
                   width: i.width,
                   height: i.height,
-                  mime: i.mime,
-                };
-              }),
-            ),
-          );
+                  mime: i.mime
+                }
+              })
+            )
+          )
           // setSendServerImage(talkUploadImage.map((tkImage) => tkImage.data));
           setSendServerImage((prev) =>
             prev.concat(
               images.map((s_img) => {
-                return s_img.data;
-              }),
-            ),
-          );
-          setImagePickerModalVisible(false);
+                return s_img.data
+              })
+            )
+          )
+          setImagePickerModalVisible(false)
         }
       })
 
-      // .then((data) => console.log('data : ', data))
+    // .then((data) => console.log('data : ', data))
 
-      .catch((e) => console.log(e.message ? e.message : e));
+      .catch((e) => console.log(e.message ? e.message : e))
   };
 
-  console.log('talkUpload : ', talkUploadImage);
-  console.log('sendServerImage : ', sendServerImage);
+  console.log('talkUpload : ', talkUploadImage)
+  console.log('sendServerImage : ', sendServerImage)
 
   const addTalk = () => {
     if (!talkContent) {
@@ -153,10 +150,10 @@ const Faq = (props) => {
         [
           {
             text: '확인',
-            onPress: () => {},
-          },
-        ],
-      );
+            onPress: () => {}
+          }
+        ]
+      )
     } else {
       const sendData = {
         tk_division: checked,
@@ -165,52 +162,43 @@ const Faq = (props) => {
         tag_restaurant: isTagRestaurant ? 1 : 0,
         tag_cafe: isTagCafe ? 1 : 0,
         tag_shop: isTagShop ? 1 : 0,
-        images: sendServerImage,
-      };
+        images: sendServerImage
+      }
 
-      const options = {
-        url: `${baseUrl}/api/talk/add_talk`,
-        method: 'post',
-        headers: {
-          'api-secret':
-            'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-          authorization: token,
-        },
-        data: qs.stringify(sendData),
-      };
-
-      axios(options)
+      VegasPost('/api/talk/add_talk', qs.stringify(sendData), {
+        headers: { authorization: `${token}` }
+      })
         .then((res) => {
-          if (res.data.result === 'success') {
+          if (res.result === 'success') {
             Alert.alert(
               '작성하신 글이 등록되었습니다.',
               '리스트로 이동합니다.',
               [
                 {
                   text: '확인',
-                  onPress: () => navigation.navigate('talk'),
-                },
-              ],
-            );
+                  onPress: () => navigation.navigate('talk')
+                }
+              ]
+            )
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => console.log(err.message))
     }
-  };
+  }
 
   const onEventCheck = () => {
-    setChecked('event');
-    setModalVisible(!isModalVisible);
+    setChecked('event')
+    setModalVisible(!isModalVisible)
   };
 
   const onQuestionCheck = () => {
-    setChecked('question');
-    setModalVisible(!isModalVisible);
+    setChecked('question')
+    setModalVisible(!isModalVisible)
   };
 
   const onReviewCheck = () => {
-    setChecked('review');
-    setModalVisible(!isModalVisible);
+    setChecked('review')
+    setModalVisible(!isModalVisible)
   };
 
   return (
@@ -218,44 +206,48 @@ const Faq = (props) => {
       style={{
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'flex-end',
-      }}>
+        justifyContent: 'flex-end'
+      }}
+    >
       <Header navigation={navigation} title={title} />
       <ScrollView>
         {/* 모달 설정 */}
         <Modal
           isVisible={isModalVisible}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
+          animationIn='fadeIn'
+          animationOut='fadeOut'
           backdropOpacity={0.5}
-          onBackdropPress={toggleModal}>
-          <View style={{flex: 1, justifyContent: 'center'}}>
+          onBackdropPress={toggleModal}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
             {/* 모달 전체 레이아웃 */}
             <View
               style={{
                 backgroundColor: '#fff',
-                borderRadius: 10,
-              }}>
+                borderRadius: 10
+              }}
+            >
               {/* 지도 장소 셀렉트 */}
               <View>
-                <View style={{marginVertical: 15}}>
+                <View style={{ marginVertical: 15 }}>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={onEventCheck}
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      paddingHorizontal: 20,
-                    }}>
-                    <Text style={{fontSize: 18}}>자유게시판</Text>
+                      paddingHorizontal: 20
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>자유게시판</Text>
                     <Image
                       source={
                         checked === 'event'
                           ? require('../src/assets/img/radio_on.png')
                           : require('../src/assets/img/radio_off.png')
                       }
-                      style={{width: 30, height: 30}}
-                      resizeMode="contain"
+                      style={{ width: 30, height: 30 }}
+                      resizeMode='contain'
                     />
                   </TouchableOpacity>
                 </View>
@@ -263,27 +255,28 @@ const Faq = (props) => {
                   style={{
                     width: '100%',
                     height: 1,
-                    backgroundColor: '#E3E3E3',
+                    backgroundColor: '#E3E3E3'
                   }}
                 />
-                <View style={{marginVertical: 15}}>
+                <View style={{ marginVertical: 15 }}>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={onQuestionCheck}
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      paddingHorizontal: 20,
-                    }}>
-                    <Text style={{fontSize: 18}}>질문있어요</Text>
+                      paddingHorizontal: 20
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>질문있어요</Text>
                     <Image
                       source={
                         checked === 'question'
                           ? require('../src/assets/img/radio_on.png')
                           : require('../src/assets/img/radio_off.png')
                       }
-                      style={{width: 30, height: 30}}
-                      resizeMode="contain"
+                      style={{ width: 30, height: 30 }}
+                      resizeMode='contain'
                     />
                   </TouchableOpacity>
                 </View>
@@ -291,27 +284,28 @@ const Faq = (props) => {
                   style={{
                     width: '100%',
                     height: 1,
-                    backgroundColor: '#E3E3E3',
+                    backgroundColor: '#E3E3E3'
                   }}
                 />
-                <View style={{marginVertical: 15}}>
+                <View style={{ marginVertical: 15 }}>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={onReviewCheck}
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      paddingHorizontal: 20,
-                    }}>
-                    <Text style={{fontSize: 18}}>여행후기</Text>
+                      paddingHorizontal: 20
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>여행후기</Text>
                     <Image
                       source={
                         checked === 'review'
                           ? require('../src/assets/img/radio_on.png')
                           : require('../src/assets/img/radio_off.png')
                       }
-                      style={{width: 30, height: 30}}
-                      resizeMode="contain"
+                      style={{ width: 30, height: 30 }}
+                      resizeMode='contain'
                     />
                   </TouchableOpacity>
                 </View>
@@ -324,23 +318,26 @@ const Faq = (props) => {
         {/* 사진업로드 모달 */}
         <Modal
           isVisible={isImagePickerModalVisible}
-          animationIn="fadeIn"
-          backdropOpacity={0.5}>
-          <View style={{flex: 1, justifyContent: 'center'}}>
+          animationIn='fadeIn'
+          backdropOpacity={0.5}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
             {/* 모달 전체 레이아웃 */}
             <View
               style={{
                 backgroundColor: '#fff',
-                borderRadius: 10,
-              }}>
+                borderRadius: 10
+              }}
+            >
               {/* 지도 장소 셀렉트 */}
               <View
                 style={{
                   paddingVertical: 30,
                   paddingHorizontal: 20,
                   justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+                  alignItems: 'center'
+                }}
+              >
                 <TouchableOpacity
                   onPress={importPhoto}
                   style={{
@@ -351,9 +348,10 @@ const Faq = (props) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: '#4A26F4',
-                    borderRadius: 25,
-                  }}>
-                  <Text style={{color: '#fff'}}>휴대전화기에서 사진 선택</Text>
+                    borderRadius: 25
+                  }}
+                >
+                  <Text style={{ color: '#fff' }}>휴대전화기에서 사진 선택</Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity
                   onPress={takePhoto}
@@ -371,7 +369,7 @@ const Faq = (props) => {
                 </TouchableOpacity> */}
                 <TouchableOpacity
                   onPress={() => {
-                    setImagePickerModalVisible(false);
+                    setImagePickerModalVisible(false)
                   }}
                   style={{
                     alignSelf: 'center',
@@ -383,9 +381,10 @@ const Faq = (props) => {
                     borderWidth: 1,
                     borderColor: '#4A26F4',
                     backgroundColor: '#fff',
-                    borderRadius: 25,
-                  }}>
-                  <Text style={{color: '#4A26F4'}}>취소</Text>
+                    borderRadius: 25
+                  }}
+                >
+                  <Text style={{ color: '#4A26F4' }}>취소</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -394,10 +393,10 @@ const Faq = (props) => {
         </Modal>
 
         <Content>
-          <View style={{marginTop: 30}} />
+          <View style={{ marginTop: 30 }} />
 
           {/* 선택(셀렉터) selector */}
-          <View style={{paddingHorizontal: 15, marginBottom: 30}}>
+          <View style={{ paddingHorizontal: 15, marginBottom: 30 }}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={toggleModal}
@@ -409,32 +408,34 @@ const Faq = (props) => {
                 height: 50,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
+                alignItems: 'center'
+              }}
+            >
               <Text>
                 {checked === 'question'
                   ? '질문있어요'
                   : checked === 'event'
-                  ? '자유게시판'
-                  : checked === 'review'
-                  ? '여행후기'
-                  : null}
+                    ? '자유게시판'
+                    : checked === 'review'
+                      ? '여행후기'
+                      : null}
               </Text>
               <Image
                 source={require('../src/assets/img/ic_select.png')}
-                resizeMode="contain"
-                style={{width: 15, height: 15}}
+                resizeMode='contain'
+                style={{ width: 15, height: 15 }}
               />
             </TouchableOpacity>
           </View>
 
           {/* 분류(중복선택가능) */}
-          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-            <Text style={{fontSize: 18, marginBottom: 5}}>
+          <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>
               분류(중복선택가능)
             </Text>
             <View
-              style={{flexDirection: 'row', marginTop: 15, marginBottom: 30}}>
+              style={{ flexDirection: 'row', marginTop: 15, marginBottom: 30 }}
+            >
               <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => setTagTravel(!isTagTravel)}
@@ -447,13 +448,15 @@ const Faq = (props) => {
                   borderColor: isTagTravel ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
                     fontSize: 16,
-                    color: isTagTravel ? '#fff' : '#E3E3E3',
-                  }}>
+                    color: isTagTravel ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagTravel ? '여행 x' : '여행'}
                 </Text>
               </TouchableOpacity>
@@ -469,13 +472,15 @@ const Faq = (props) => {
                   borderColor: isTagRestaurant ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
                     fontSize: 16,
-                    color: isTagRestaurant ? '#fff' : '#E3E3E3',
-                  }}>
+                    color: isTagRestaurant ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagRestaurant ? '맛집 x' : '맛집'}
                 </Text>
               </TouchableOpacity>
@@ -491,13 +496,15 @@ const Faq = (props) => {
                   borderColor: isTagCafe ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
                     fontSize: 16,
-                    color: isTagCafe ? '#fff' : '#E3E3E3',
-                  }}>
+                    color: isTagCafe ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagCafe ? '카페 x' : '카페'}
                 </Text>
               </TouchableOpacity>
@@ -513,13 +520,15 @@ const Faq = (props) => {
                   borderColor: isTagShop ? '#666666' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
                     fontSize: 16,
-                    color: isTagShop ? '#fff' : '#E3E3E3',
-                  }}>
+                    color: isTagShop ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagShop ? '쇼핑 x' : '쇼핑'}
                 </Text>
               </TouchableOpacity>
@@ -527,9 +536,9 @@ const Faq = (props) => {
           </View>
 
           {/* 사진 업로드 */}
-          <View style={{paddingHorizontal: 20, paddingBottom: 10}}>
-            <Text style={{fontSize: 18, marginBottom: 5}}>사진업로드</Text>
-            <Text style={{fontSize: 14, marginBottom: 5, color: '#666666'}}>
+          <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>사진업로드</Text>
+            <Text style={{ fontSize: 14, marginBottom: 5, color: '#666666' }}>
               사진은 5장까지 업로드하실 수 있습니다.
             </Text>
             <View
@@ -537,30 +546,33 @@ const Faq = (props) => {
                 marginTop: 10,
                 marginBottom: 30,
                 flexDirection: 'row',
-                flexWrap: 'wrap',
-              }}>
+                flexWrap: 'wrap'
+              }}
+            >
               {talkUploadImage.length !== 0 ? (
                 talkUploadImage.length === 1 ? (
                   <TouchableOpacity
                     onPress={() => {
                       const removeImg = talkUploadImage.filter(
                         (selectImg) =>
-                          selectImg.data !== talkUploadImage[0].data,
-                      );
-                      console.log('마지막 사진 : ', talkUploadImage);
-                      setTalkUploadImage(removeImg);
-                    }}>
+                          selectImg.data !== talkUploadImage[0].data
+                      )
+                      console.log('마지막 사진 : ', talkUploadImage)
+                      setTalkUploadImage(removeImg)
+                    }}
+                  >
                     <ImageBackground
-                      source={{uri: `${talkUploadImage[0].path}`}}
-                      resizeMode="cover"
+                      source={{ uri: `${talkUploadImage[0].path}` }}
+                      resizeMode='cover'
                       style={{
                         position: 'relative',
                         width: Dimensions.get('window').width * 0.27,
                         height: Dimensions.get('window').width * 0.27,
                         marginRight: Dimensions.get('window').width * 0.03,
-                        marginBottom: Dimensions.get('window').width * 0.03,
+                        marginBottom: Dimensions.get('window').width * 0.03
                       }}
-                      imageStyle={{borderRadius: 10}}>
+                      imageStyle={{ borderRadius: 10 }}
+                    >
                       <View
                         style={{
                           position: 'absolute',
@@ -571,12 +583,13 @@ const Faq = (props) => {
                           borderRadius: 50,
                           backgroundColor: 'rgba(0,0,0,0.5)',
                           justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
+                          alignItems: 'center'
+                        }}
+                      >
                         <Image
                           source={require('../src/assets/img/_ic_del_small.png')}
-                          style={{width: 15, height: 15}}
-                          resizeMode="center"
+                          style={{ width: 15, height: 15 }}
+                          resizeMode='center'
                         />
                       </View>
                     </ImageBackground>
@@ -587,21 +600,23 @@ const Faq = (props) => {
                       key={idx}
                       onPress={() => {
                         const removeImg = talkUploadImage.filter(
-                          (selectImg) => selectImg.data !== tkImg.data,
-                        );
-                        setTalkUploadImage(removeImg);
-                      }}>
+                          (selectImg) => selectImg.data !== tkImg.data
+                        )
+                        setTalkUploadImage(removeImg)
+                      }}
+                    >
                       <ImageBackground
-                        source={{uri: `${tkImg.path}`}}
-                        resizeMode="cover"
+                        source={{ uri: `${tkImg.path}` }}
+                        resizeMode='cover'
                         style={{
                           position: 'relative',
                           width: Dimensions.get('window').width * 0.27,
                           height: Dimensions.get('window').width * 0.27,
                           marginRight: Dimensions.get('window').width * 0.03,
-                          marginBottom: Dimensions.get('window').width * 0.03,
+                          marginBottom: Dimensions.get('window').width * 0.03
                         }}
-                        imageStyle={{borderRadius: 10}}>
+                        imageStyle={{ borderRadius: 10 }}
+                      >
                         <View
                           style={{
                             position: 'absolute',
@@ -612,12 +627,13 @@ const Faq = (props) => {
                             borderRadius: 50,
                             backgroundColor: 'rgba(0,0,0,0.5)',
                             justifyContent: 'center',
-                            alignItems: 'center',
-                          }}>
+                            alignItems: 'center'
+                          }}
+                        >
                           <Image
                             source={require('../src/assets/img/_ic_del_small.png')}
-                            style={{width: 15, height: 15}}
-                            resizeMode="center"
+                            style={{ width: 15, height: 15 }}
+                            resizeMode='center'
                           />
                         </View>
                       </ImageBackground>
@@ -634,15 +650,16 @@ const Faq = (props) => {
                   height: Dimensions.get('window').width * 0.27,
                   borderWidth: 1,
                   borderColor: '#E3E3E3',
-                  borderRadius: 15,
+                  borderRadius: 15
                 }}
-                onPress={checkPhotos}>
+                onPress={checkPhotos}
+              >
                 <Image
                   source={require('../src/assets/img/ic_photo.png')}
-                  resizeMode="contain"
+                  resizeMode='contain'
                   style={{
                     width: 70,
-                    height: 70,
+                    height: 70
                   }}
                 />
               </TouchableOpacity>
@@ -651,8 +668,8 @@ const Faq = (props) => {
               <Form>
                 <Textarea
                   rowSpan={7}
-                  placeholder="텍스트를 입력해주세요"
-                  placeholderTextColor="#E3E3E3"
+                  placeholder='텍스트를 입력해주세요'
+                  placeholderTextColor='#E3E3E3'
                   value={talkContent}
                   style={{
                     borderStyle: 'solid',
@@ -660,7 +677,7 @@ const Faq = (props) => {
                     borderColor: '#eee',
                     borderRadius: 10,
                     paddingLeft: 15,
-                    marginBottom: 20,
+                    marginBottom: 20
                   }}
                   onChangeText={(text) => setTalkContent(text)}
                 />
@@ -672,8 +689,9 @@ const Faq = (props) => {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'center',
-            }}>
+              justifyContent: 'center'
+            }}
+          >
             <TouchableOpacity activeOpacity={0.7} onPress={addTalk}>
               <Text
                 style={{
@@ -682,8 +700,9 @@ const Faq = (props) => {
                   paddingVertical: 15,
                   borderRadius: 30,
                   fontSize: 18,
-                  color: '#fff',
-                }}>
+                  color: '#fff'
+                }}
+              >
                 글쓰기
               </Text>
             </TouchableOpacity>
@@ -691,7 +710,7 @@ const Faq = (props) => {
         </Content>
       </ScrollView>
     </Container>
-  );
+  )
 };
 
-export default Faq;
+export default Faq

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -6,50 +6,46 @@ import {
   ScrollView,
   StyleSheet,
   Dimensions,
-  Image,
-} from 'react-native';
-import {Content, Thumbnail} from 'native-base';
-import axios from 'axios';
-import qs from 'qs';
+  Image
+} from 'react-native'
+import { Content, Thumbnail } from 'native-base'
+import Config from 'react-native-config'
+import qs from 'qs'
+import { VegasPost } from '../../../utils/axios.config'
 
-const baseUrl = 'https://dmonster1826.cafe24.com';
+const BASE_URL = Config.BASE_URL
 
 const Questions = (props) => {
-  const navigation = props.navigation;
-  const [questions, setQuestions] = useState([]);
+  const navigation = props.navigation
+  const [questions, setQuestions] = useState([])
 
-  const today = new Date();
+  const today = new Date()
   const talkUpdatedDay = (day) => {
-    return new Date(day);
+    return new Date(day)
   };
 
   useEffect(() => {
-    axios({
-      method: 'post',
-      url: `${baseUrl}/api/talk/get_talks`,
-      data: qs.stringify({
-        tk_division: 'question',
-      }),
-      headers: {
-        'api-secret':
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.ImppaG9vbitqb29uaG8i.Ssj4aWLMewq2e8ZbOBM7rUwlzLPvi6UdZgM93LVVD9U',
-      },
-    })
+    VegasPost(
+      '/api/talk/get_talks',
+      qs.stringify({
+        tk_division: 'question'
+      })
+    )
       .then((res) => {
-        if (res.data.result == 'success') {
-          setQuestions(res.data.data);
+        if (res.result == 'success') {
+          setQuestions(res.data)
         }
       })
-      .catch((err) => console.error(err));
-  }, []);
+      .catch((err) => console.error(err))
+  }, [])
 
   return (
     <ScrollView>
-      <Content style={{marginTop: 30}}>
+      <Content style={{ marginTop: 30 }}>
         {/* Review 탭(이벤트참여) 1번째 리스트 */}
         {questions.map((question) => (
           <View key={question.tk_id}>
-            <View style={{marginHorizontal: 20}}>
+            <View style={{ marginHorizontal: 20 }}>
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('TalkDetail', {
@@ -58,53 +54,55 @@ const Questions = (props) => {
                     ut_image: question.ut_image,
                     tk_id: question.tk_id,
                     tk_content: question.tk_content,
-                    files: question.files,
-                  })
-                }>
+                    files: question.files
+                  })}
+              >
                 <View
                   style={{
                     flexDirection: 'row',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
-                    marginBottom: 20,
-                  }}>
+                    marginBottom: 20
+                  }}
+                >
                   {!question.ut_image ? (
                     <Thumbnail
                       source={{
-                        uri: 'https://aeealberta.org/wp-content/uploads/2018/10/profile.png',
+                        uri: 'https://aeealberta.org/wp-content/uploads/2018/10/profile.png'
                       }}
                       style={styles.thumbnailStyle}
-                      resizeMode="cover"
+                      resizeMode='cover'
                     />
                   ) : (
                     <Thumbnail
                       source={{
-                        uri: `${baseUrl}/${question.ut_image}`,
+                        uri: `${BASE_URL}/${question.ut_image}`
                       }}
                       style={styles.thumbnailStyle}
-                      resizeMode="cover"
+                      resizeMode='cover'
                     />
                   )}
                   <View>
-                    <View style={{flexDirection: 'row', marginBottom: 5}}>
+                    <View style={{ flexDirection: 'row', marginBottom: 5 }}>
                       <Text
                         style={{
                           fontSize: 16,
                           color: '#4A26F4',
-                          marginRight: 5,
-                        }}>
+                          marginRight: 5
+                        }}
+                      >
                         질문있어요
                       </Text>
-                      <Text style={{fontSize: 16, color: '#000'}}>
+                      <Text style={{ fontSize: 16, color: '#000' }}>
                         {question.ut_nickname}
                       </Text>
                     </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Text style={{fontSize: 16, color: '#888'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <Text style={{ fontSize: 16, color: '#888' }}>
                         {Math.floor(
                           (today.getTime() -
                             talkUpdatedDay(question.ar_updated_at).getTime()) /
-                            (1000 * 60 * 60 * 24),
+                            (1000 * 60 * 60 * 24)
                         )}
                         일전
                       </Text>
@@ -113,7 +111,7 @@ const Questions = (props) => {
                           width: 1,
                           height: 20,
                           backgroundColor: '#E3E3E3',
-                          marginHorizontal: 7,
+                          marginHorizontal: 7
                         }}
                       />
                       <Image
@@ -122,39 +120,37 @@ const Questions = (props) => {
                           width: 17,
                           height: 17,
                           marginTop: 2,
-                          marginRight: 5,
+                          marginRight: 5
                         }}
-                        resizeMode="contain"
+                        resizeMode='contain'
                       />
-                      <Text style={{fontSize: 16, color: '#888'}}>
+                      <Text style={{ fontSize: 16, color: '#888' }}>
                         {question.wo_count}
                       </Text>
                     </View>
                   </View>
                 </View>
-                <Text style={{fontSize: 15, color: '#888', lineHeight: 20}}>
+                <Text style={{ fontSize: 15, color: '#888', lineHeight: 20 }}>
                   {question.tk_content}
                 </Text>
               </TouchableOpacity>
             </View>
             {question.files ? (
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {question.files.map((file, idx) => (
                   <Image
                     key={idx}
                     source={{
-                      uri: `${baseUrl}/${file.ft_file_path}`,
+                      uri: `${BASE_URL}/${file.ft_file_path}`
                     }}
-                    resizeMode="cover"
+                    resizeMode='cover'
                     style={{
                       width: 100,
                       height: 100,
                       borderRadius: 10,
                       marginRight: idx[0] ? 5 : 10,
                       marginLeft: idx ? 0 : 10,
-                      marginTop: 20,
+                      marginTop: 20
                     }}
                   />
                 ))}
@@ -165,14 +161,14 @@ const Questions = (props) => {
                 width: window,
                 height: 1,
                 backgroundColor: '#eaeaea',
-                marginVertical: 20,
+                marginVertical: 20
               }}
             />
           </View>
         ))}
       </Content>
     </ScrollView>
-  );
+  )
 };
 
 const styles = StyleSheet.create({
@@ -182,8 +178,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: 20,
     borderWidth: 1,
-    borderColor: '#ccc',
-  },
-});
+    borderColor: '#ccc'
+  }
+})
 
-export default Questions;
+export default Questions

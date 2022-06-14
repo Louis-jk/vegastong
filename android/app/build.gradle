@@ -1,5 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: 'com.google.gms.google-services'
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle" // .env 환경변수 react-native-config 패키지 설치
+
 import com.android.build.OutputFile
 
 /**
@@ -77,6 +79,16 @@ import com.android.build.OutputFile
  * ]
  */
 
+// .env 환경변수 react-native-config 패키지 설치
+project.ext.envConfigFiles = [
+    productiondebug: ".env.production",
+    productionrelease: ".env.production",
+    developmentrelease: ".env.development",
+    developmentdebug: ".env.development",
+    stagingrelease: ".env.staging",
+    stagingdebug: ".env.staging" 
+]
+
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
 ]
@@ -152,6 +164,7 @@ android {
         multiDexEnabled true
         versionCode 1
         versionName "1.0"
+        resValue "string", "build_config_package", "com.dmonster.vegastong"
     }
     splits {
         abi {
@@ -164,6 +177,7 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug', 'release'] // .env 환경변수 react-native-config 패키지 설치
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -173,8 +187,28 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
-    }
 
+        devDebug {
+            initWith debug
+            applicationIdSuffix ".dev"
+            matchingFallbacks = ['debug']
+        }
+        devRelease {
+            initWith release
+            applicationIdSuffix ".dev"
+            matchingFallbacks = ['release']
+        }
+        stageDebug {
+            initWith debug
+            applicationIdSuffix ".test"
+            matchingFallbacks = ['debug']
+        }
+        stageRelease {
+            initWith release
+            applicationIdSuffix ".test"
+            matchingFallbacks = ['release']
+        }
+    }
     // // applicationVariants are e.g. debug, release
     // applicationVariants.all { variant ->
     //     variant.outputs.each { output ->
@@ -207,6 +241,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
     implementation project(':react-native-seoul-kakao-login') // kakao
     // implementation project(':react-native-seoul-naver-login') // naver
+    implementation project(':react-native-config') // .env 환경변수 react-native-config 패키지 설치
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 

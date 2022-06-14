@@ -14,9 +14,6 @@ import { useDispatch } from 'react-redux'
 // import Toast from 'react-native-toast-message';
 // import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-community/async-storage'
-
-import qs from 'qs'
-import axios from 'axios'
 import messaging from '@react-native-firebase/messaging'
 
 // ios 아이콘 로딩문제 해결 코드

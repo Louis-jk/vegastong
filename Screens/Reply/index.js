@@ -13,10 +13,9 @@ import moment from 'moment'
 import { useSelector } from 'react-redux'
 import Modal from 'react-native-modal'
 import ImageModal from 'react-native-image-modal'
-import qs from 'qs'
-import axios from 'axios'
+import Config from 'react-native-config'
 
-const baseUrl = 'https://dmonster1826.cafe24.com'
+const BASE_URL = Config.BASE_URL
 
 const index = (props) => {
   const { replyLists, ReplyDel } = props
@@ -75,7 +74,7 @@ const index = (props) => {
             }}
           >
             <Image
-              source={{ uri: `${baseUrl}${img}` }}
+              source={{ uri: `${BASE_URL}${img}` }}
               style={{
                 width: Dimensions.get('window').width,
                 height: Dimensions.get('window').width
@@ -115,7 +114,7 @@ const index = (props) => {
                     <Thumbnail
                       source={
                         w.ut_image
-                          ? { uri: `${baseUrl}${w.ut_image}` }
+                          ? { uri: `${BASE_URL}${w.ut_image}` }
                           : require('../src/assets/img/pr_no_img.png')
                       }
                       style={{
@@ -191,7 +190,7 @@ const index = (props) => {
                     >
                       <Image
                         key={f.ft_id}
-                        source={{ uri: `${baseUrl}${f.ft_file_path}` }}
+                        source={{ uri: `${BASE_URL}${f.ft_file_path}` }}
                         resizeMode='cover'
                         style={{
                           width: 300,
@@ -211,7 +210,7 @@ const index = (props) => {
                   onPress={() => ImageView(`${w.files[0].ft_file_path}`)}
                 >
                   <Image
-                    source={{ uri: `${baseUrl}${w.files[0].ft_file_path}` }}
+                    source={{ uri: `${BASE_URL}${w.files[0].ft_file_path}` }}
                     resizeMode='cover'
                     style={{
                       width: 300,
