@@ -7,6 +7,7 @@ import {
   Alert,
   Dimensions,
   ImageBackground,
+  BackHandler,
 } from 'react-native';
 
 import {Container, Content, Form, Item, Input} from 'native-base';
@@ -73,6 +74,34 @@ const LoginScreen = (props) => {
 
   const [kakaoLoginLoading, setKakaoLoginLoading] = useState(false);
   const [naverToken, setNaverToken] = React.useState(null);
+
+  useEffect(() => {
+    const backAction = () => {
+      console.log('Login canGoBack', navigation.canGoBack());
+      const cangBack = navigation.canGoBack();
+
+      if (!cangBack) {
+        Alert.alert('앱 종료', '앱을 종료하시겠습니까?', [
+          {
+            text: '취소',
+            onPress: () => null,
+            style: 'cancel',
+          },
+          {text: '확인', onPress: () => BackHandler.exitApp()},
+        ]);
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const socialCheckApi = async (type, id) => {
     const form = new FormData();

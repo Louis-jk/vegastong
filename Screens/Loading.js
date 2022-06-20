@@ -104,7 +104,7 @@ const Loading = (props) => {
 
   useEffect(() => {
     AuthApp()
-    resetStack('home')
+    // resetStack('home')
   }, [])
 
   return (

@@ -9,8 +9,12 @@ import {
   StyleSheet,
   Dimensions,
   TextInput,
-  Pressable
+  Pressable,
+  BackHandler,
+  Alert,
+  ToastAndroid
 } from 'react-native'
+import { useRoute } from '@react-navigation/native'
 import AsyncStorage from '@react-native-community/async-storage'
 import { Container, Content } from 'native-base'
 import { useDispatch, useSelector } from 'react-redux'
@@ -30,8 +34,16 @@ const { window } = Dimensions.get('window')
 const BASE_URL = Config.BASE_URL
 
 const HomeScreen = ({ navigation, route }) => {
+  const routesParams = useRoute()
+  console.log('routesParams ??', routesParams)
+
   const routeName = route.name
   const [lists, setLists] = useState([])
+
+  console.log('navigation', navigation)
+  // const route = useRoute();
+  // console.log('App route name', route.name);
+  console.log('HOME route name', routeName)
 
   // Redux 연동
   // const token = useSelector((state) => state.Reducer.token);
@@ -47,7 +59,7 @@ const HomeScreen = ({ navigation, route }) => {
         console.log('getToken OK')
       } else {
         console.log('Home Screen AsyncStorage Token is Null')
-        navigation.navigate('login')
+        // navigation.navigate('login');
       }
     } catch (error) {
       console.log('error', error)
@@ -85,6 +97,36 @@ const HomeScreen = ({ navigation, route }) => {
     dispatch(setTag('shop'))
     navigation.navigate('SearchList', { text: '쇼핑' })
   };
+
+  const [exitApp, setExitApp] = React.useState(false)
+
+  useEffect(() => {
+    const backAction = () => {
+      console.log('HOME canGoBack', navigation.canGoBack())
+      const cangBack = navigation.canGoBack()
+
+      if (!cangBack) {
+        Alert.alert('앱 종료', '앱을 종료하시겠습니까?', [
+          {
+            text: '취소',
+            onPress: () => null,
+            style: 'cancel'
+          },
+          { text: '확인', onPress: () => BackHandler.exitApp() }
+        ])
+        return true
+      } else {
+        return false
+      }
+    }
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction
+    )
+
+    return () => backHandler.remove()
+  }, [])
 
   console.log('Home lists', lists)
 
