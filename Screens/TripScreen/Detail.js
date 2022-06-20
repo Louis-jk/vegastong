@@ -64,8 +64,19 @@ const Detail = (props) => {
           setTripDetail(res.data);
           setTripDetailFiles(res.data.files);
           setTripDetailContent(JSON.parse(res.data.tr_content));
-          setTripStars(res.data.tr_stars);
-          setMyTripStar(res.data.my_star.st_star);
+
+          if (res.data.tr_stars) {
+            setTripStars(res.data.tr_stars);
+          } else {
+            setTripStars(0);
+          }
+
+          if (res.data.my_star && res.data.my_star.st_star) {
+            setMyTripStar(res.data.my_star.st_star);
+          } else {
+            setMyTripStar(0);
+          }
+
           setBenefit(res.data.tr_benefit);
         } else {
           Alert.alert('잘못된 경로입니다.', '경로를 확인해주세요.', [
@@ -504,21 +515,31 @@ const Detail = (props) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'flex-start',
-              alignItems: 'center',
+              alignItems: 'flex-start',
+              width: '100%',
+              paddingVertical: 10,
             }}>
             <Text
               style={{
                 backgroundColor: '#4A26F4',
                 paddingVertical: 5,
-                paddingHorizontal: 7,
+                paddingHorizontal: 10,
                 borderRadius: 10,
                 color: '#fff',
                 fontSize: 10,
                 marginRight: 10,
               }}>
-              도로명
+              주소
             </Text>
-            <Text style={{marginVertical: 20}}>{tripDetail.tr_address}</Text>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                width: '87%',
+              }}>
+              <Text textBreakStrategy="simple">{tripDetail.tr_address}</Text>
+            </View>
           </View>
           <View
             style={{
@@ -539,9 +560,39 @@ const Detail = (props) => {
                       }}>
                       {tc.title}
                     </Text>
-                    <Text style={{fontSize: 16, lineHeight: 23}}>
-                      {tc.content}
-                    </Text>
+                    {tc.title === '웹사이트' ? (
+                      <TouchableOpacity
+                        onPress={() =>
+                          Linking.openURL(`https://${tc.content}`)
+                        }>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            lineHeight: 23,
+                            color: '#000',
+                            textDecorationLine: 'underline',
+                          }}>
+                          {tc.content}
+                        </Text>
+                      </TouchableOpacity>
+                    ) : tc.title === '전화번호' ? (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(`tel:+1${tc.content}`)}>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            lineHeight: 23,
+                            color: '#000',
+                            textDecorationLine: 'underline',
+                          }}>
+                          {tc.content}
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text style={{fontSize: 16, lineHeight: 23}}>
+                        {tc.content}
+                      </Text>
+                    )}
                   </View>
                 ))
               : null}
