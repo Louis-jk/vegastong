@@ -501,84 +501,82 @@ const DrawerMenu = (props) => {
           >
             기타
           </Text> */}
-        {/* <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}> */}
-        {/* <TouchableOpacity
-              activeOpacity={1}
-              onPress={() =>
-                navigation.navigate('Terms', {
-                  navigation,
-                  title: '사용자 이용약관'
-                })}
-            >
-              <View
-                style={{
-                  borderColor: '#E3E3E3',
-                  borderWidth: 1,
-                  borderBottomWidth: 0,
-                  borderTopRightRadius: 10,
-                  borderTopLeftRadius: 10
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    padding: 15,
-                    textAlign: 'center',
-                    color: '#666666'
-                  }}
-                >
-                  사용자 이용약관
-                </Text>
-              </View>
-            </TouchableOpacity> */}
-        {/* <TouchableOpacity
-              activeOpacity={1}
-              onPress={() =>
-                navigation.navigate('InfoCompany', {
-                  navigation,
-                  title: '회사소개',
-                })
-              }>
+        <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() =>
+              navigation.navigate('Terms', {
+                navigation,
+                title: '사용자 이용약관',
+              })
+            }>
+            <View
+              style={{
+                borderColor: '#E3E3E3',
+                borderWidth: 1,
+                borderBottomWidth: 0,
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
+              }}>
               <Text
                 style={{
                   fontSize: 16,
-                  borderColor: '#E3E3E3',
-                  borderWidth: 1,
                   padding: 15,
                   textAlign: 'center',
                   color: '#666666',
                 }}>
-                회사소개
+                사용자 이용약관
               </Text>
-            </TouchableOpacity> */}
-        {/* <TouchableOpacity
-              activeOpacity={1}
-              onPress={() =>
-                navigation.navigate('Privacy', {
-                  navigation,
-                  title: '개인정보이용처리방침',
-                })
-              }>
-              <View
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() =>
+              navigation.navigate('InfoCompany', {
+                navigation,
+                title: '회사소개',
+              })
+            }>
+            <Text
+              style={{
+                fontSize: 16,
+                borderColor: '#E3E3E3',
+                borderWidth: 1,
+                padding: 15,
+                textAlign: 'center',
+                color: '#666666',
+              }}>
+              회사소개
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() =>
+              navigation.navigate('Privacy', {
+                navigation,
+                title: '개인정보이용처리방침',
+              })
+            }>
+            <View
+              style={{
+                borderColor: '#E3E3E3',
+                borderWidth: 1,
+                borderTopWidth: 0,
+                borderBottomRightRadius: 10,
+                borderBottomLeftRadius: 10,
+              }}>
+              <Text
                 style={{
-                  borderColor: '#E3E3E3',
-                  borderWidth: 1,
-                  borderTopWidth: 0,
-                  borderBottomRightRadius: 10,
-                  borderBottomLeftRadius: 10,
+                  fontSize: 16,
+                  padding: 15,
+                  textAlign: 'center',
+                  color: '#666666',
                 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    padding: 15,
-                    textAlign: 'center',
-                    color: '#666666',
-                  }}>
-                  개인정보이용처리방침
-                </Text>
-              </View>
-            </TouchableOpacity> */}
-        {/* </View> */}
+                개인정보이용처리방침
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
         {/* </View> */}
       </ScrollView>
     </>
