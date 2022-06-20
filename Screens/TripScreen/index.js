@@ -93,7 +93,7 @@ const TripScreen = ({ navigation, route }) => {
                     status={
                       checked === '스트립/다운타운' ? 'checked' : 'unchecked'
                     }
-                    onPress={() => selectArea('vegas', '스트립/다운타운')}
+                    onPress={() => selectArea('downtown', '스트립/다운타운')}
                     color='#4A26F4'
                   />
                 </View>
@@ -119,7 +119,7 @@ const TripScreen = ({ navigation, route }) => {
                   <RadioButton
                     value='주변관광지'
                     status={checked === '주변관광지' ? 'checked' : 'unchecked'}
-                    onPress={() => selectArea('park', '주변관광지')}
+                    onPress={() => selectArea('tour', '주변관광지')}
                     color='#4A26F4'
                   />
                 </View>
@@ -173,7 +173,7 @@ const TripScreen = ({ navigation, route }) => {
                     status={
                       checked === '쇼핑/한인업소' ? 'checked' : 'unchecked'
                     }
-                    onPress={() => selectArea('golf', '쇼핑/한인업소')}
+                    onPress={() => selectArea('store', '쇼핑/한인업소')}
                     color='#4A26F4'
                   />
                 </View>
