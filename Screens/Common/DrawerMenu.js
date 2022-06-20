@@ -432,7 +432,7 @@ const DrawerMenu = (props) => {
           <TouchableHighlight
             activeOpacity={0.8}
             underlayColor="#FFF8E4"
-            onPress={() => navigation.navigate('storeFaq', {title: '입점문의'})}
+            onPress={() => navigation.navigate('storeFaq', {title: '컨시어지'})}
             style={styles.drawerMenuArea}>
             <View
               style={{
@@ -448,7 +448,7 @@ const DrawerMenu = (props) => {
                 style={styles.drawerMenuAreaImage}
                 resizeMode="contain"
               />
-              <Text style={styles.drawerMenuAreaText}>입점문의</Text>
+              <Text style={styles.drawerMenuAreaText}>컨시어지</Text>
             </View>
           </TouchableHighlight>
           <TouchableHighlight

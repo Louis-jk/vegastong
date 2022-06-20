@@ -21,7 +21,7 @@ const TripScreen = ({ navigation, route }) => {
   const [isModalVisible, setModalVisible] = useState(false)
   const toggleModal = () => setModalVisible(!isModalVisible)
 
-  const [checked, setChecked] = useState('베가스주변')
+  const [checked, setChecked] = useState('스트립/다운타운')
   const [postMessage, setPostMessage] = useState('')
 
   const patchPostMessageFunction = () => {
@@ -86,12 +86,14 @@ const TripScreen = ({ navigation, route }) => {
                   }}
                 >
                   <Text style={{ fontSize: 18, color: '#333', marginRight: 30 }}>
-                    베가스주변
+                    스트립/다운타운
                   </Text>
                   <RadioButton
-                    value='베가스주변'
-                    status={checked === '베가스주변' ? 'checked' : 'unchecked'}
-                    onPress={() => selectArea('vegas', '베가스주변')}
+                    value='스트립/다운타운'
+                    status={
+                      checked === '스트립/다운타운' ? 'checked' : 'unchecked'
+                    }
+                    onPress={() => selectArea('vegas', '스트립/다운타운')}
                     color='#4A26F4'
                   />
                 </View>
@@ -112,12 +114,12 @@ const TripScreen = ({ navigation, route }) => {
                   }}
                 >
                   <Text style={{ fontSize: 18, color: '#333', marginRight: 30 }}>
-                    국립공원
+                    주변관광지
                   </Text>
                   <RadioButton
-                    value='국립공원'
-                    status={checked === '국립공원' ? 'checked' : 'unchecked'}
-                    onPress={() => selectArea('park', '국립공원')}
+                    value='주변관광지'
+                    status={checked === '주변관광지' ? 'checked' : 'unchecked'}
+                    onPress={() => selectArea('park', '주변관광지')}
                     color='#4A26F4'
                   />
                 </View>
@@ -138,12 +140,12 @@ const TripScreen = ({ navigation, route }) => {
                   }}
                 >
                   <Text style={{ fontSize: 18, color: '#333', marginRight: 30 }}>
-                    호텔
+                    호텔/골프
                   </Text>
                   <RadioButton
-                    value='호텔'
-                    status={checked === '호텔' ? 'checked' : 'unchecked'}
-                    onPress={() => selectArea('hotel', '호텔')}
+                    value='호텔/골프'
+                    status={checked === '호텔/골프' ? 'checked' : 'unchecked'}
+                    onPress={() => selectArea('hotel', '호텔/골프')}
                     color='#4A26F4'
                   />
                 </View>
@@ -164,12 +166,14 @@ const TripScreen = ({ navigation, route }) => {
                   }}
                 >
                   <Text style={{ fontSize: 18, color: '#333', marginRight: 30 }}>
-                    골프
+                    쇼핑/한인업소
                   </Text>
                   <RadioButton
-                    value='골프'
-                    status={checked === '골프' ? 'checked' : 'unchecked'}
-                    onPress={() => selectArea('golf', '골프')}
+                    value='쇼핑/한인업소'
+                    status={
+                      checked === '쇼핑/한인업소' ? 'checked' : 'unchecked'
+                    }
+                    onPress={() => selectArea('golf', '쇼핑/한인업소')}
                     color='#4A26F4'
                   />
                 </View>
