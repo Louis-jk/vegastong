@@ -265,7 +265,7 @@ const DrawerMenu = (props) => {
             </View>
           </View>
         </View>
-        <View style={{marginTop: 20}}>
+        <View style={{paddingTop: 20, zIndex: 100, backgroundColor: '#fff'}}>
           <TouchableHighlight
             activeOpacity={0.8}
             underlayColor="#FFF8E4"
@@ -489,95 +489,102 @@ const DrawerMenu = (props) => {
             </View>
           </TouchableHighlight>
         </View>
-        {/* <View style={{width: '100%', height: 5, backgroundColor: '#F5F5F5'}} /> */}
-        {/* <View style={{paddingVertical: 20, paddingHorizontal: 20}}> */}
-        {/* <Text
+        <View style={{width: '100%', height: 1, backgroundColor: '#ccc'}} />
+        <View
+          style={{
+            paddingVertical: 20,
+            paddingHorizontal: 20,
+            backgroundColor: '#eee',
+          }}>
+          {/* <Text
             style={{
               fontSize: 22,
               fontWeight: 'bold',
               marginLeft: 10,
-              marginBottom: 5
-            }}
-          >
+              marginBottom: 5,
+            }}>
             기타
           </Text> */}
-        <View style={{paddingHorizontal: 10, paddingVertical: 10}}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() =>
-              navigation.navigate('Terms', {
-                navigation,
-                title: '사용자 이용약관',
-              })
-            }>
-            <View
-              style={{
-                borderColor: '#E3E3E3',
-                borderWidth: 1,
-                borderBottomWidth: 0,
-                borderTopRightRadius: 10,
-                borderTopLeftRadius: 10,
-              }}>
+          <View style={{paddingVertical: 10}}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() =>
+                navigation.navigate('Terms', {
+                  navigation,
+                  title: '사용자 이용약관',
+                })
+              }>
+              <View
+                style={{
+                  borderColor: '#E3E3E3',
+                  borderWidth: 1,
+                  borderBottomWidth: 0,
+                  borderTopRightRadius: 10,
+                  borderTopLeftRadius: 10,
+                  backgroundColor: '#fff',
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    padding: 15,
+                    textAlign: 'center',
+                    color: '#666666',
+                  }}>
+                  사용자 이용약관
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() =>
+                navigation.navigate('InfoCompany', {
+                  navigation,
+                  title: '회사소개',
+                })
+              }
+              style={{backgroundColor: '#fff'}}>
               <Text
                 style={{
                   fontSize: 16,
+                  borderColor: '#E3E3E3',
+                  borderWidth: 1,
                   padding: 15,
                   textAlign: 'center',
                   color: '#666666',
                 }}>
-                사용자 이용약관
+                회사소개
               </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() =>
-              navigation.navigate('InfoCompany', {
-                navigation,
-                title: '회사소개',
-              })
-            }>
-            <Text
-              style={{
-                fontSize: 16,
-                borderColor: '#E3E3E3',
-                borderWidth: 1,
-                padding: 15,
-                textAlign: 'center',
-                color: '#666666',
-              }}>
-              회사소개
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() =>
-              navigation.navigate('Privacy', {
-                navigation,
-                title: '개인정보이용처리방침',
-              })
-            }>
-            <View
-              style={{
-                borderColor: '#E3E3E3',
-                borderWidth: 1,
-                borderTopWidth: 0,
-                borderBottomRightRadius: 10,
-                borderBottomLeftRadius: 10,
-              }}>
-              <Text
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() =>
+                navigation.navigate('Privacy', {
+                  navigation,
+                  title: '개인정보이용처리방침',
+                })
+              }>
+              <View
                 style={{
-                  fontSize: 16,
-                  padding: 15,
-                  textAlign: 'center',
-                  color: '#666666',
+                  borderColor: '#E3E3E3',
+                  borderWidth: 1,
+                  borderTopWidth: 0,
+                  borderBottomRightRadius: 10,
+                  borderBottomLeftRadius: 10,
+                  backgroundColor: '#fff',
                 }}>
-                개인정보이용처리방침
-              </Text>
-            </View>
-          </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    padding: 15,
+                    textAlign: 'center',
+                    color: '#666666',
+                  }}>
+                  개인정보이용처리방침
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
-        {/* </View> */}
       </ScrollView>
     </>
   );

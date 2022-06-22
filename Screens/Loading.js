@@ -46,6 +46,7 @@ const Loading = (props) => {
 
   useEffect(() => {
     setLoading(true)
+    console.log('loading token?', token)
     if (!token) {
       // props.navigation.navigate('login');
       resetStack('login')
@@ -104,7 +105,7 @@ const Loading = (props) => {
 
   useEffect(() => {
     AuthApp()
-    // resetStack('home')
+    // resetStack('home');
   }, [])
 
   return (

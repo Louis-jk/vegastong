@@ -139,7 +139,7 @@ const FaqWriteScreen = (props) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
-              marginTop: 100,
+              marginTop: 50,
               marginBottom: 80
             }}
           >

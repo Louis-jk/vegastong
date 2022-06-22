@@ -1,21 +1,21 @@
-import React from 'react';
+import React from 'react'
 import {
   View,
   Text,
   TouchableOpacity,
   Image,
   ScrollView,
-  Dimensions,
-} from 'react-native';
-import {Container, Content} from 'native-base';
-import {useSelector} from 'react-redux';
-import Header from '../Common/Header';
+  Dimensions
+} from 'react-native'
+import { Container, Content } from 'native-base'
+import { useSelector } from 'react-redux'
+import Header from '../Common/Header'
 
 const StoreFaqComScreen = (props) => {
-  const navigation = props.navigation;
-  const title = props.route.params.title;
+  const navigation = props.navigation
+  const title = props.route.params.title
 
-  const {ut_nickname} = useSelector((state) => state.UserInfoReducer);
+  const { ut_nickname } = useSelector((state) => state.UserInfoReducer)
 
   return (
     <Container>
@@ -29,38 +29,41 @@ const StoreFaqComScreen = (props) => {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              height: Dimensions.get('window').height - 80,
-            }}>
+              height: Dimensions.get('window').height - 80
+            }}
+          >
             <View
               style={{
                 justifyContent: 'center',
-                alignItems: 'center',
-              }}>
+                alignItems: 'center'
+              }}
+            >
               {/* 현재 공주로 이미지, 입점문의 완료 이미지 */}
               <Image
                 source={require('../src/assets/img/complete_img2.png')}
-                resizeMode="contain"
-                style={{width: 200, height: 130, marginBottom: 30}}
+                resizeMode='contain'
+                style={{ width: 200, height: 130, marginBottom: 30 }}
               />
 
-              <View style={{flexDirection: 'row', marginBottom: 2}}>
-                <Text style={{fontSize: 24, fontWeight: 'bold'}}>
+              <View style={{ flexDirection: 'row', marginBottom: 2 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold' }}>
                   {ut_nickname}
                 </Text>
-                <Text style={{fontSize: 24, color: '#666666'}}>
-                  님 입점문의가
+                <Text style={{ fontSize: 24, color: '#666666' }}>
+                  님 컨시어지 문의가
                 </Text>
               </View>
-              <View style={{marginBottom: 15}}>
+              <View style={{ marginBottom: 15 }}>
                 <Text
-                  style={{fontSize: 24, color: '#666666', marginBottom: 15}}>
+                  style={{ fontSize: 24, color: '#666666', marginBottom: 15 }}
+                >
                   완료되었습니다.
                 </Text>
               </View>
-              <Text style={{fontSize: 16, color: '#666666', marginBottom: 2}}>
+              <Text style={{ fontSize: 16, color: '#666666', marginBottom: 2 }}>
                 빠른시일내에 확인후 작성해주신
               </Text>
-              <Text style={{fontSize: 16, color: '#666666', marginBottom: 5}}>
+              <Text style={{ fontSize: 16, color: '#666666', marginBottom: 5 }}>
                 연락처로 연락드리겠습니다.
               </Text>
             </View>
@@ -73,11 +76,13 @@ const StoreFaqComScreen = (props) => {
                   justifyContent: 'center',
                   marginTop: 30,
                   marginBottom: 80,
-                  paddingHorizontal: 20,
-                }}>
+                  paddingHorizontal: 20
+                }}
+              >
                 <TouchableOpacity
                   activeOpacity={0.7}
-                  onPress={() => navigation.navigate('home')}>
+                  onPress={() => navigation.navigate('home')}
+                >
                   <Text
                     style={{
                       backgroundColor: '#4A26F4',
@@ -85,8 +90,9 @@ const StoreFaqComScreen = (props) => {
                       paddingVertical: 15,
                       borderRadius: 30,
                       fontSize: 18,
-                      color: '#fff',
-                    }}>
+                      color: '#fff'
+                    }}
+                  >
                     확인
                   </Text>
                 </TouchableOpacity>
@@ -96,7 +102,7 @@ const StoreFaqComScreen = (props) => {
         </Content>
       </ScrollView>
     </Container>
-  );
+  )
 };
 
-export default StoreFaqComScreen;
+export default StoreFaqComScreen

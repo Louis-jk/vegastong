@@ -21,19 +21,23 @@ const StoreFaqScreen = (props) => {
   console.log('스토어 입점 문의 토큰 : ', token)
 
   const [siName, setSiName] = useState(null)
-  const [siCategory, setSiCategory] = useState(null)
-  const [siItem, setSiItem] = useState(null)
+  const [siDate, setSiDate] = useState(null)
+  const [siTime, setSiTime] = useState(null)
+  const [siPerson, setSiPerson] = useState(null)
+  const [siContent, setSiContent] = useState(null)
   const [siContact, setSiContact] = useState(null)
 
-  const nameInputRef = useRef()
-  const typeInputRef = useRef()
-  const itemInputRef = useRef()
-  const phoneInputRef = useRef()
+  const nameInputRef = useRef() // 쇼/호텔 명 텍스트폼
+  const dateInputRef = useRef() // 날짜 텍스트폼
+  const timeInputRef = useRef() // 시간 텍스트폼
+  const personInputRef = useRef() // 인원 텍스트폼
+  const contentInputRef = useRef() // 문의내용 텍스트폼
+  const phoneInputRef = useRef() // 연락처 텍스트폼
 
   const onSubmit = () => {
     console.log('siName >?', siName)
-    console.log('siCategory >?', siCategory)
-    console.log('siItem >?', siItem)
+    console.log('siDate >?', siDate)
+    console.log('siContent >?', siContent)
     console.log('siContact >?', siContact)
 
     // return false;
@@ -55,18 +59,32 @@ const StoreFaqScreen = (props) => {
           onPress: () => nameInputRef.current._root.focus()
         }
       ])
-    } else if (siCategory === '' || siCategory === null) {
-      Alert.alert('날짜/시간/인원을 입력해주세요.', '', [
+    } else if (siDate === '' || siDate === null) {
+      Alert.alert('날짜를 입력해주세요.', '', [
         {
           text: '확인',
-          onPress: () => typeInputRef.current._root.focus()
+          onPress: () => dateInputRef.current._root.focus()
         }
       ])
-    } else if (siItem === '' || siItem === null) {
+    } else if (siTime === '' || siTime === null) {
+      Alert.alert('시간을 입력해주세요.', '', [
+        {
+          text: '확인',
+          onPress: () => timeInputRef.current._root.focus()
+        }
+      ])
+    } else if (siPerson === '' || siPerson === null) {
+      Alert.alert('인원을 입력해주세요.', '', [
+        {
+          text: '확인',
+          onPress: () => personInputRef.current._root.focus()
+        }
+      ])
+    } else if (siContent === '' || siContent === null) {
       Alert.alert('문의내용을 입력해주세요.', '', [
         {
           text: '확인',
-          onPress: () => itemInputRef.current._root.focus()
+          onPress: () => contentInputRef.current._root.focus()
         }
       ])
     } else if (siContact === '' || siContact === null) {
@@ -81,8 +99,10 @@ const StoreFaqScreen = (props) => {
         '/api/store/add_store_inquiry',
         qs.stringify({
           si_name: siName,
-          si_category: siCategory,
-          si_item: siItem,
+          si_date: siDate,
+          si_time: siTime,
+          si_person_count: siPerson,
+          si_content: siContent,
           si_contact: siContact
         }),
         { headers: { authorization: `${token}` } }
@@ -144,18 +164,18 @@ const StoreFaqScreen = (props) => {
                 autoCapitalize='none'
                 returnKeyLabel='다음'
                 returnKeyType='next'
-                onSubmitEditing={() => typeInputRef.current._root.focus()}
+                onSubmitEditing={() => dateInputRef.current._root.focus()}
               />
             </View>
           </View>
 
           {/* 각 입력란 */}
           <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
-            <Text style={{ fontSize: 18, marginBottom: 5 }}>날짜/시간/인원</Text>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>날짜</Text>
             <View>
               <Input
-                ref={typeInputRef}
-                placeholder='날짜/시간/인원을 입력해주세요'
+                ref={dateInputRef}
+                placeholder='0000-00-00 (예:2022-06-20)'
                 placeholderTextColor='#E3E3E3'
                 style={{
                   borderStyle: 'solid',
@@ -165,12 +185,64 @@ const StoreFaqScreen = (props) => {
                   paddingLeft: 15,
                   marginBottom: 5
                 }}
-                value={siCategory}
-                onChangeText={(category) => setSiCategory(category)}
+                value={siDate}
+                onChangeText={(text) => setSiDate(text)}
                 autoCapitalize='none'
                 returnKeyLabel='다음'
                 returnKeyType='next'
-                onSubmitEditing={() => itemInputRef.current._root.focus()}
+                onSubmitEditing={() => timeInputRef.current._root.focus()}
+              />
+            </View>
+          </View>
+
+          {/* 각 입력란 */}
+          <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>시간</Text>
+            <View>
+              <Input
+                ref={timeInputRef}
+                placeholder='00:00 (예: 17:00)'
+                placeholderTextColor='#E3E3E3'
+                style={{
+                  borderStyle: 'solid',
+                  borderWidth: 1,
+                  borderColor: '#eee',
+                  borderRadius: 10,
+                  paddingLeft: 15,
+                  marginBottom: 5
+                }}
+                value={siTime}
+                onChangeText={(text) => setSiTime(text)}
+                autoCapitalize='none'
+                returnKeyLabel='다음'
+                returnKeyType='next'
+                onSubmitEditing={() => personInputRef.current._root.focus()}
+              />
+            </View>
+          </View>
+
+          {/* 각 입력란 */}
+          <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>인원</Text>
+            <View>
+              <Input
+                ref={personInputRef}
+                placeholder='00 (예: 2)'
+                placeholderTextColor='#E3E3E3'
+                style={{
+                  borderStyle: 'solid',
+                  borderWidth: 1,
+                  borderColor: '#eee',
+                  borderRadius: 10,
+                  paddingLeft: 15,
+                  marginBottom: 5
+                }}
+                value={siPerson}
+                onChangeText={(text) => setSiPerson(text)}
+                autoCapitalize='none'
+                returnKeyLabel='다음'
+                returnKeyType='next'
+                onSubmitEditing={() => contentInputRef.current._root.focus()}
               />
             </View>
           </View>
@@ -181,9 +253,10 @@ const StoreFaqScreen = (props) => {
             <View>
               <Textarea
                 rowSpan={5}
-                ref={itemInputRef}
+                ref={contentInputRef}
                 placeholder='문의내용을 입력해주세요'
-                onChangeText={(item) => setSiItem(item)}
+                value={siContent}
+                onChangeText={(item) => setSiContent(item)}
                 autoCapitalize='none'
                 returnKeyLabel='다음'
                 returnKeyType='next'
@@ -196,7 +269,7 @@ const StoreFaqScreen = (props) => {
                 fontSize={17}
               />
               {/* <Input
-                ref={itemInputRef}
+                ref={timeInputRef}
                 placeholder='문의내용을 입력해주세요'
                 placeholderTextColor='#E3E3E3'
                 style={{
@@ -209,8 +282,8 @@ const StoreFaqScreen = (props) => {
                 }}
                 numberOfLines={5}
                 multiline
-                value={siItem}
-                onChangeText={(item) => setSiItem(item)}
+                value={siContent}
+                onChangeText={(item) => setSiContent(item)}
                 autoCapitalize='none'
                 returnKeyLabel='다음'
                 returnKeyType='next'
