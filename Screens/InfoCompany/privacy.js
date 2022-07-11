@@ -32,12 +32,13 @@ const privacy = (props) => {
       <ScrollView>
         <AutoHeightWebView
           source={{
-            html: `<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0" maximum-scale=1.0 user-scalable="no"><body><style>body{width:100vw; padding-top:5px; font-size:14px; line-height:22px;} h1{font-size:1.4rem;} h2{font-size:1.2rem} li{list-style:none;}</style>${comInfo.co_content}<div style="display:block; width:100%; height:50px; margin-bottom:30px;"></div></body></html>`
+            html: `<html><head><meta name="viewport" content="width=device-width, initial-scale=1.0" maximum-scale=1.0 user-scalable="no"><body><style>body{width:100vw; padding-top:5px; font-size:16px; line-height:26px;} h1{font-size:1.4rem;} h2{font-size:1.2rem} li{list-style:none;}</style>${comInfo.co_content}<div style="display:block; width:100%; height:50px; margin-bottom:30px;"></div></body></html>`
           }}
           style={{
             flex: 1,
-            width: Dimensions.get('window').width - 50,
-            marginTop: 35,
+            width: Dimensions.get('window').width - 40,
+            paddingHorizontal: 20,
+            marginTop: 10,
             alignSelf: 'center'
           }}
         />
