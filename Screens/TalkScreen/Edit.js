@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
@@ -7,8 +7,8 @@ import {
   ScrollView,
   ImageBackground,
   Alert,
-  Dimensions,
-} from 'react-native';
+  Dimensions
+} from 'react-native'
 import {
   Container,
   Content,
@@ -16,15 +16,15 @@ import {
   Textarea,
   Form,
   Item,
-  Button,
-} from 'native-base';
+  Button
+} from 'native-base'
 
-import Modal from 'react-native-modal';
-import ImagePicker from 'react-native-image-crop-picker';
-import {useSelector} from 'react-redux';
-import qs from 'qs';
-import Header from '../Common/Header';
-import {VegasGet, VegasPost} from '../../utils/axios.config';
+import Modal from 'react-native-modal'
+import ImagePicker from 'react-native-image-crop-picker'
+import { useSelector } from 'react-redux'
+import qs from 'qs'
+import Header from '../Common/Header'
+import { VegasGet, VegasPost } from '../../utils/axios.config'
 
 const Edit = (props) => {
   const {
@@ -35,71 +35,71 @@ const Edit = (props) => {
     tagTravel,
     tagRestaurant,
     tagCafe,
-    tagShop,
-  } = props.route.params;
+    tagShop
+  } = props.route.params
 
-  const navigation = props.navigation;
-  console.log('Edit Files : ', files);
-  console.log('Edit props : ', props);
+  const navigation = props.navigation
+  console.log('Edit Files : ', files)
+  console.log('Edit props : ', props)
 
   // Redux 연동
-  const token = useSelector((state) => state.Reducer.token);
+  const token = useSelector((state) => state.Reducer.token)
 
-  const [checked, setChecked] = useState(tk_division);
-  const [checkedDivision, setCheckedDivision] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [checked, setChecked] = useState(tk_division)
+  const [checkedDivision, setCheckedDivision] = useState(null)
+  const [isModalVisible, setModalVisible] = useState(false)
   const [isImagePickerModalVisible, setImagePickerModalVisible] =
-    useState(false);
-  const [isTagTravel, setTagTravel] = useState(false);
-  const [isTagRestaurant, setTagRestaurant] = useState(false);
-  const [isTagCafe, setTagCafe] = useState(false);
-  const [isTagShop, setTagShop] = useState(false);
-  const [talkContent, setTalkContent] = useState(null);
-  const [talkUploadImage, setTalkUploadImage] = useState([]);
-  const [sendSeverImage, setSendServerImage] = useState([]);
+    useState(false)
+  const [isTagTravel, setTagTravel] = useState(false)
+  const [isTagRestaurant, setTagRestaurant] = useState(false)
+  const [isTagCafe, setTagCafe] = useState(false)
+  const [isTagShop, setTagShop] = useState(false)
+  const [talkContent, setTalkContent] = useState(null)
+  const [talkUploadImage, setTalkUploadImage] = useState([])
+  const [sendSeverImage, setSendServerImage] = useState([])
 
-  console.log('checked : ', checked);
+  console.log('checked : ', checked)
 
-  const toggleModal = () => setModalVisible(!isModalVisible);
+  const toggleModal = () => setModalVisible(!isModalVisible)
   const setCheckedLocal = (v) => {
-    setChecked(v);
+    setChecked(v)
     // ReactNativeWebView.sendMessage(JSON.stringify(checked));
-    toggleModal();
+    toggleModal()
   };
 
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([])
   const getTalk = () => {
     VegasGet(`/api/talk/get_talk/${tk_id}`)
       .then((res) => {
-        console.log('[EDIT PAGE] get Talk : ', res);
+        console.log('[EDIT PAGE] get Talk : ', res)
         if (res.result === 'success') {
-          setFiles(res.data.files);
+          setFiles(res.data.files)
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   useEffect(() => {
-    setTalkContent(content);
+    setTalkContent(content)
     if (tagTravel === '1') {
-      setTagTravel(true);
+      setTagTravel(true)
     }
     if (tagRestaurant === '1') {
-      setTagRestaurant(true);
+      setTagRestaurant(true)
     }
     if (tagCafe === '1') {
-      setTagCafe(true);
+      setTagCafe(true)
     }
     if (tagShop === '1') {
-      setTagShop(true);
+      setTagShop(true)
     }
-    getTalk();
+    getTalk()
     return () => {
-      setTalkContent();
+      setTalkContent()
     };
-  }, [content]);
+  }, [content])
 
-  let ImageLength = talkUploadImage.length + files.length;
+  let ImageLength = talkUploadImage.length + files.length
   const checkPhotos = () => {
     if (ImageLength >= 5) {
       Alert.alert(
@@ -108,15 +108,15 @@ const Edit = (props) => {
         [
           {
             text: '확인',
-            onPress: () => {},
-          },
-        ],
-      );
+            onPress: () => {}
+          }
+        ]
+      )
     }
     if (ImageLength < 5) {
-      setImagePickerModalVisible(true);
+      setImagePickerModalVisible(true)
     }
-  };
+  }
 
   const photoCountErr = () => {
     Alert.alert(
@@ -125,10 +125,10 @@ const Edit = (props) => {
       [
         {
           text: '확인',
-          onPress: () => {},
-        },
-      ],
-    );
+          onPress: () => {}
+        }
+      ]
+    )
   };
 
   const importPhoto = () => {
@@ -143,13 +143,13 @@ const Edit = (props) => {
       includeExif: true,
       useFrontCamera: false,
       includeBase64: true,
-      cropping: true,
+      cropping: true
     })
       .then((images) => {
         if (images.length + files.length > 5) {
-          photoCountErr();
+          photoCountErr()
         } else if (images.length + talkUploadImage.length + files.length > 5) {
-          photoCountErr();
+          photoCountErr()
         } else {
           // 현재 상태에 기기에서 불러온 이미지 값 저장 => 서버 업로드 전 기기에서 표시할 값
           setTalkUploadImage((prev) =>
@@ -161,49 +161,49 @@ const Edit = (props) => {
                   path: i.path,
                   width: i.width,
                   height: i.height,
-                  mime: i.mime,
-                };
-              }),
-            ),
-          );
+                  mime: i.mime
+                }
+              })
+            )
+          )
           // 서버에 보낼 이미지 저장 -> image64 파일만 뽑아 배열 형태로 저장
           setSendServerImage((prev) =>
             prev.concat(
               images.map((s_img) => {
-                return s_img.data;
-              }),
-            ),
-          );
-          setImagePickerModalVisible(false);
+                return s_img.data
+              })
+            )
+          )
+          setImagePickerModalVisible(false)
         }
       })
 
-      .catch((e) => console.log(e.message ? e.message : e));
+      .catch((e) => console.log(e.message ? e.message : e))
   };
 
   const takePhoto = () => {
     ImagePicker.openCamera({
       width: 300,
       height: 400,
-      cropping: true,
+      cropping: true
     })
       .then((images) => {
         setTalkUploadImage(
           images.map((i) => {
-            console.log('received image', i);
+            console.log('received image', i)
             return {
               uri: i.path,
               data: i.data,
               path: i.path,
               width: i.width,
               height: i.height,
-              mime: i.mime,
-            };
-          }),
-        );
-        setImagePickerModalVisible(false);
+              mime: i.mime
+            }
+          })
+        )
+        setImagePickerModalVisible(false)
       })
-      .catch((e) => console.log(e.message ? e.message : e));
+      .catch((e) => console.log(e.message ? e.message : e))
   };
 
   const modifyTalk = async () => {
@@ -214,10 +214,10 @@ const Edit = (props) => {
         [
           {
             text: '확인',
-            onPress: () => {},
-          },
-        ],
-      );
+            onPress: () => {}
+          }
+        ]
+      )
     } else {
       const sendData = {
         tk_id,
@@ -226,66 +226,66 @@ const Edit = (props) => {
         tag_travel: isTagTravel ? 1 : 0,
         tag_restaurant: isTagRestaurant ? 1 : 0,
         tag_cafe: isTagCafe ? 1 : 0,
-        tag_shop: isTagShop ? 1 : 0,
-      };
+        tag_shop: isTagShop ? 1 : 0
+      }
 
       await VegasPost('/api/talk/modify_talk', qs.stringify(sendData), {
-        headers: {authorization: `${token}`},
+        headers: { authorization: `${token}` }
       })
         .then((res) => {
           if (res.result === 'success') {
             Alert.alert('수정되었습니다.', '리스트로 이동합니다.', [
               {
                 text: '확인',
-                onPress: () => navigation.navigate('talk'),
-              },
-            ]);
+                onPress: () => navigation.navigate('talk')
+              }
+            ])
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => console.log(err.message))
 
       await VegasPost(
         '/api/talk/add_talk_images',
         qs.stringify({
           tk_id,
-          images: sendSeverImage,
+          images: sendSeverImage
         }),
-        {headers: {authorization: `${token}`}},
+        { headers: { authorization: `${token}` } }
       )
         .then((res) => {
           if (res.result === 'success') {
-            console.log('Image Upload Success!');
+            console.log('Image Upload Success!')
           }
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => console.log(err.message))
     }
-  };
+  }
 
   const onEventCheck = () => {
-    setChecked('event');
-    setModalVisible(!isModalVisible);
+    setChecked('event')
+    setModalVisible(!isModalVisible)
   };
 
   const onQuestionCheck = () => {
-    setChecked('question');
-    setModalVisible(!isModalVisible);
+    setChecked('question')
+    setModalVisible(!isModalVisible)
   };
 
   const onReviewCheck = () => {
-    setChecked('review');
-    setModalVisible(!isModalVisible);
+    setChecked('review')
+    setModalVisible(!isModalVisible)
   };
 
   const DelTalkServerImage = (ft_id) => {
     VegasGet(`/api/talk/remove_talk_image/${ft_id}`, {
-      headers: {authorization: `${token}`},
+      headers: { authorization: `${token}` }
     })
       .then((res) => {
         if (res.result === 'success') {
-          getTalk();
+          getTalk()
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   const removeTalkImage = (ft_id) => {
@@ -295,14 +295,14 @@ const Edit = (props) => {
       [
         {
           text: '확인',
-          onPress: () => DelTalkServerImage(ft_id),
+          onPress: () => DelTalkServerImage(ft_id)
         },
         {
           text: '취소',
-          onPress: () => {},
-        },
-      ],
-    );
+          onPress: () => {}
+        }
+      ]
+    )
   };
 
   return (
@@ -310,43 +310,47 @@ const Edit = (props) => {
       style={{
         flex: 1,
         flexDirection: 'column',
-        justifyContent: 'flex-end',
-      }}>
+        justifyContent: 'flex-end'
+      }}
+    >
       <Header navigation={navigation} title={title} />
       <ScrollView>
         {/* 모달 설정 */}
         <Modal
           isVisible={isModalVisible}
-          animationIn="fadeIn"
-          animationOut="fadeOut"
-          backdropOpacity={0.5}>
-          <View style={{flex: 1, justifyContent: 'center'}}>
+          animationIn='fadeIn'
+          animationOut='fadeOut'
+          backdropOpacity={0.5}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
             {/* 모달 전체 레이아웃 */}
             <View
               style={{
                 backgroundColor: '#fff',
-                borderRadius: 10,
-              }}>
+                borderRadius: 10
+              }}
+            >
               {/* 지도 장소 셀렉트 */}
               <View>
-                <View style={{marginVertical: 15}}>
+                <View style={{ marginVertical: 15 }}>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={onEventCheck}
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      paddingHorizontal: 20,
-                    }}>
-                    <Text style={{fontSize: 18}}>이벤트참여</Text>
+                      paddingHorizontal: 20
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>이벤트참여</Text>
                     <Image
                       source={
                         checked === 'event'
                           ? require('../src/assets/img/radio_on.png')
                           : require('../src/assets/img/radio_off.png')
                       }
-                      style={{width: 30, height: 30}}
-                      resizeMode="contain"
+                      style={{ width: 30, height: 30 }}
+                      resizeMode='contain'
                     />
                   </TouchableOpacity>
                 </View>
@@ -354,27 +358,28 @@ const Edit = (props) => {
                   style={{
                     width: '100%',
                     height: 1,
-                    backgroundColor: '#E3E3E3',
+                    backgroundColor: '#E3E3E3'
                   }}
                 />
-                <View style={{marginVertical: 15}}>
+                <View style={{ marginVertical: 15 }}>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={onQuestionCheck}
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      paddingHorizontal: 20,
-                    }}>
-                    <Text style={{fontSize: 18}}>질문있어요</Text>
+                      paddingHorizontal: 20
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>질문있어요</Text>
                     <Image
                       source={
                         checked === 'question'
                           ? require('../src/assets/img/radio_on.png')
                           : require('../src/assets/img/radio_off.png')
                       }
-                      style={{width: 30, height: 30}}
-                      resizeMode="contain"
+                      style={{ width: 30, height: 30 }}
+                      resizeMode='contain'
                     />
                   </TouchableOpacity>
                 </View>
@@ -382,27 +387,28 @@ const Edit = (props) => {
                   style={{
                     width: '100%',
                     height: 1,
-                    backgroundColor: '#E3E3E3',
+                    backgroundColor: '#E3E3E3'
                   }}
                 />
-                <View style={{marginVertical: 15}}>
+                <View style={{ marginVertical: 15 }}>
                   <TouchableOpacity
                     activeOpacity={1}
                     onPress={onReviewCheck}
                     style={{
                       flexDirection: 'row',
                       justifyContent: 'space-between',
-                      paddingHorizontal: 20,
-                    }}>
-                    <Text style={{fontSize: 18}}>여행후기</Text>
+                      paddingHorizontal: 20
+                    }}
+                  >
+                    <Text style={{ fontSize: 18 }}>여행후기</Text>
                     <Image
                       source={
                         checked === 'review'
                           ? require('../src/assets/img/radio_on.png')
                           : require('../src/assets/img/radio_off.png')
                       }
-                      style={{width: 30, height: 30}}
-                      resizeMode="contain"
+                      style={{ width: 30, height: 30 }}
+                      resizeMode='contain'
                     />
                   </TouchableOpacity>
                 </View>
@@ -415,23 +421,26 @@ const Edit = (props) => {
         {/* 사진업로드 모달 */}
         <Modal
           isVisible={isImagePickerModalVisible}
-          animationIn="fadeIn"
-          backdropOpacity={0.5}>
-          <View style={{flex: 1, justifyContent: 'center'}}>
+          animationIn='fadeIn'
+          backdropOpacity={0.5}
+        >
+          <View style={{ flex: 1, justifyContent: 'center' }}>
             {/* 모달 전체 레이아웃 */}
             <View
               style={{
                 backgroundColor: '#fff',
-                borderRadius: 10,
-              }}>
+                borderRadius: 10
+              }}
+            >
               {/* 지도 장소 셀렉트 */}
               <View
                 style={{
                   paddingVertical: 30,
                   paddingHorizontal: 20,
                   justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
+                  alignItems: 'center'
+                }}
+              >
                 <TouchableOpacity
                   onPress={importPhoto}
                   style={{
@@ -442,9 +451,10 @@ const Edit = (props) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     backgroundColor: '#4A26F4',
-                    borderRadius: 25,
-                  }}>
-                  <Text style={{color: '#fff'}}>휴대전화기에서 사진 선택</Text>
+                    borderRadius: 25
+                  }}
+                >
+                  <Text style={{ color: '#fff' }}>휴대전화기에서 사진 선택</Text>
                 </TouchableOpacity>
                 {/* <TouchableOpacity
                   onPress={takePhoto}
@@ -462,7 +472,7 @@ const Edit = (props) => {
                 </TouchableOpacity> */}
                 <TouchableOpacity
                   onPress={() => {
-                    setImagePickerModalVisible(false);
+                    setImagePickerModalVisible(false)
                   }}
                   style={{
                     alignSelf: 'center',
@@ -474,9 +484,10 @@ const Edit = (props) => {
                     borderWidth: 1,
                     borderColor: '#4A26F4',
                     backgroundColor: '#fff',
-                    borderRadius: 25,
-                  }}>
-                  <Text style={{color: '#4A26F4'}}>취소</Text>
+                    borderRadius: 25
+                  }}
+                >
+                  <Text style={{ color: '#4A26F4' }}>취소</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -485,10 +496,10 @@ const Edit = (props) => {
         </Modal>
 
         <Content>
-          <View style={{marginTop: 30}} />
+          <View style={{ marginTop: 30 }} />
 
           {/* 선택(셀렉터) selector */}
-          <View style={{paddingHorizontal: 15, marginBottom: 30}}>
+          <View style={{ paddingHorizontal: 15, marginBottom: 30 }}>
             <TouchableOpacity
               activeOpacity={1}
               onPress={toggleModal}
@@ -500,32 +511,34 @@ const Edit = (props) => {
                 height: 50,
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
+                alignItems: 'center'
+              }}
+            >
               <Text>
                 {checked === 'question'
                   ? '질문있어요'
                   : checked === 'event'
-                  ? '이벤트참여'
-                  : checked === 'review'
-                  ? '여행후기'
-                  : null}
+                    ? '이벤트참여'
+                    : checked === 'review'
+                      ? '여행후기'
+                      : null}
               </Text>
               <Image
                 source={require('../src/assets/img/ic_select.png')}
-                resizeMode="contain"
-                style={{width: 15, height: 15}}
+                resizeMode='contain'
+                style={{ width: 15, height: 15 }}
               />
             </TouchableOpacity>
           </View>
 
           {/* 분류(중복선택가능) */}
-          <View style={{paddingHorizontal: 20, paddingVertical: 10}}>
-            <Text style={{fontSize: 18, marginBottom: 5}}>
+          <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>
               분류(중복선택가능)
             </Text>
             <View
-              style={{flexDirection: 'row', marginTop: 15, marginBottom: 30}}>
+              style={{ flexDirection: 'row', marginTop: 15, marginBottom: 30 }}
+            >
               <TouchableOpacity
                 activeOpacity={1}
                 onPress={() => setTagTravel(!isTagTravel)}
@@ -538,13 +551,15 @@ const Edit = (props) => {
                   borderColor: isTagTravel ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: isTagTravel ? '#fff' : '#E3E3E3',
-                  }}>
+                    fontSize: 14,
+                    color: isTagTravel ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagTravel ? '여행 x' : '여행'}
                 </Text>
               </TouchableOpacity>
@@ -560,13 +575,15 @@ const Edit = (props) => {
                   borderColor: isTagRestaurant ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: isTagRestaurant ? '#fff' : '#E3E3E3',
-                  }}>
+                    fontSize: 14,
+                    color: isTagRestaurant ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagRestaurant ? '맛집 x' : '맛집'}
                 </Text>
               </TouchableOpacity>
@@ -582,14 +599,16 @@ const Edit = (props) => {
                   borderColor: isTagCafe ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: isTagCafe ? '#fff' : '#E3E3E3',
-                  }}>
-                  {isTagCafe ? '카페 x' : '카페'}
+                    fontSize: 14,
+                    color: isTagCafe ? '#fff' : '#E3E3E3'
+                  }}
+                >
+                  {isTagCafe ? '카페/주점 x' : '카페/주점'}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -599,18 +618,20 @@ const Edit = (props) => {
                 style={{
                   paddingVertical: 10,
                   paddingHorizontal: 15,
-                  backgroundColor: isTagShop ? '#666666' : 'transparent',
+                  backgroundColor: isTagShop ? '#4A26F4' : 'transparent',
                   borderRadius: 25,
-                  borderColor: isTagShop ? '#666666' : '#E3E3E3',
+                  borderColor: isTagShop ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  marginRight: 5,
-                }}>
+                  marginRight: 5
+                }}
+              >
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: isTagShop ? '#fff' : '#E3E3E3',
-                  }}>
+                    fontSize: 14,
+                    color: isTagShop ? '#fff' : '#E3E3E3'
+                  }}
+                >
                   {isTagShop ? '쇼핑 x' : '쇼핑'}
                 </Text>
               </TouchableOpacity>
@@ -618,9 +639,9 @@ const Edit = (props) => {
           </View>
 
           {/* 사진 업로드 */}
-          <View style={{paddingHorizontal: 20, paddingBottom: 10}}>
-            <Text style={{fontSize: 18, marginBottom: 5}}>사진업로드</Text>
-            <Text style={{fontSize: 14, marginBottom: 5, color: '#666666'}}>
+          <View style={{ paddingHorizontal: 20, paddingBottom: 10 }}>
+            <Text style={{ fontSize: 18, marginBottom: 5 }}>사진업로드</Text>
+            <Text style={{ fontSize: 14, marginBottom: 5, color: '#666666' }}>
               사진은 5장까지 업로드하실 수 있습니다.
             </Text>
             <View
@@ -628,29 +649,32 @@ const Edit = (props) => {
                 marginTop: 10,
                 marginBottom: 30,
                 flexDirection: 'row',
-                flexWrap: 'wrap',
-              }}>
+                flexWrap: 'wrap'
+              }}
+            >
               {talkUploadImage.length !== 0 ? (
                 talkUploadImage.length === 1 ? (
                   <TouchableOpacity
                     onPress={() => {
                       const removeImg = talkUploadImage.filter(
                         (selectImg) =>
-                          selectImg.data !== talkUploadImage[0].data,
-                      );
-                      setTalkUploadImage(removeImg);
-                    }}>
+                          selectImg.data !== talkUploadImage[0].data
+                      )
+                      setTalkUploadImage(removeImg)
+                    }}
+                  >
                     <ImageBackground
-                      source={{uri: `${talkUploadImage[0].path}`}}
-                      resizeMode="cover"
+                      source={{ uri: `${talkUploadImage[0].path}` }}
+                      resizeMode='cover'
                       style={{
                         position: 'relative',
                         width: Dimensions.get('window').width * 0.27,
                         height: Dimensions.get('window').width * 0.27,
                         marginRight: Dimensions.get('window').width * 0.03,
-                        marginBottom: Dimensions.get('window').width * 0.03,
+                        marginBottom: Dimensions.get('window').width * 0.03
                       }}
-                      imageStyle={{borderRadius: 10}}>
+                      imageStyle={{ borderRadius: 10 }}
+                    >
                       <View
                         style={{
                           position: 'absolute',
@@ -661,12 +685,13 @@ const Edit = (props) => {
                           borderRadius: 50,
                           backgroundColor: 'rgba(0,0,0,0.5)',
                           justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
+                          alignItems: 'center'
+                        }}
+                      >
                         <Image
                           source={require('../src/assets/img/_ic_del_small.png')}
-                          style={{width: 15, height: 15}}
-                          resizeMode="center"
+                          style={{ width: 15, height: 15 }}
+                          resizeMode='center'
                         />
                       </View>
                     </ImageBackground>
@@ -677,21 +702,23 @@ const Edit = (props) => {
                       key={idx}
                       onPress={() => {
                         const removeImg = talkUploadImage.filter(
-                          (selectImg) => selectImg.data !== tkImg.data,
-                        );
-                        setTalkUploadImage(removeImg);
-                      }}>
+                          (selectImg) => selectImg.data !== tkImg.data
+                        )
+                        setTalkUploadImage(removeImg)
+                      }}
+                    >
                       <ImageBackground
-                        source={{uri: `${tkImg.path}`}}
-                        resizeMode="cover"
+                        source={{ uri: `${tkImg.path}` }}
+                        resizeMode='cover'
                         style={{
                           position: 'relative',
                           width: Dimensions.get('window').width * 0.27,
                           height: Dimensions.get('window').width * 0.27,
                           marginRight: Dimensions.get('window').width * 0.03,
-                          marginBottom: Dimensions.get('window').width * 0.03,
+                          marginBottom: Dimensions.get('window').width * 0.03
                         }}
-                        imageStyle={{borderRadius: 10}}>
+                        imageStyle={{ borderRadius: 10 }}
+                      >
                         <View
                           style={{
                             position: 'absolute',
@@ -702,12 +729,13 @@ const Edit = (props) => {
                             borderRadius: 50,
                             backgroundColor: 'rgba(0,0,0,0.5)',
                             justifyContent: 'center',
-                            alignItems: 'center',
-                          }}>
+                            alignItems: 'center'
+                          }}
+                        >
                           <Image
                             source={require('../src/assets/img/_ic_del_small.png')}
-                            style={{width: 15, height: 15}}
-                            resizeMode="center"
+                            style={{ width: 15, height: 15 }}
+                            resizeMode='center'
                           />
                         </View>
                       </ImageBackground>
@@ -721,19 +749,21 @@ const Edit = (props) => {
                 files.length === 1 ? (
                   <TouchableOpacity
                     onPress={() => {
-                      removeTalkImage(files[0].ft_id);
-                    }}>
+                      removeTalkImage(files[0].ft_id)
+                    }}
+                  >
                     <ImageBackground
-                      source={{uri: `${files[0].ft_download_url}`}}
-                      resizeMode="cover"
+                      source={{ uri: `${files[0].ft_download_url}` }}
+                      resizeMode='cover'
                       style={{
                         position: 'relative',
                         width: Dimensions.get('window').width * 0.27,
                         height: Dimensions.get('window').width * 0.27,
                         marginRight: Dimensions.get('window').width * 0.03,
-                        marginBottom: Dimensions.get('window').width * 0.03,
+                        marginBottom: Dimensions.get('window').width * 0.03
                       }}
-                      imageStyle={{borderRadius: 10}}>
+                      imageStyle={{ borderRadius: 10 }}
+                    >
                       <View
                         style={{
                           position: 'absolute',
@@ -744,12 +774,13 @@ const Edit = (props) => {
                           borderRadius: 50,
                           backgroundColor: 'rgba(0,0,0,0.5)',
                           justifyContent: 'center',
-                          alignItems: 'center',
-                        }}>
+                          alignItems: 'center'
+                        }}
+                      >
                         <Image
                           source={require('../src/assets/img/_ic_del_small.png')}
-                          style={{width: 15, height: 15}}
-                          resizeMode="center"
+                          style={{ width: 15, height: 15 }}
+                          resizeMode='center'
                         />
                       </View>
                     </ImageBackground>
@@ -759,19 +790,21 @@ const Edit = (props) => {
                     <TouchableOpacity
                       key={tkImg.ft_id}
                       onPress={() => {
-                        removeTalkImage(tkImg.ft_id);
-                      }}>
+                        removeTalkImage(tkImg.ft_id)
+                      }}
+                    >
                       <ImageBackground
-                        source={{uri: `${tkImg.ft_download_url}`}}
-                        resizeMode="cover"
+                        source={{ uri: `${tkImg.ft_download_url}` }}
+                        resizeMode='cover'
                         style={{
                           position: 'relative',
                           width: Dimensions.get('window').width * 0.27,
                           height: Dimensions.get('window').width * 0.27,
                           marginRight: Dimensions.get('window').width * 0.03,
-                          marginBottom: Dimensions.get('window').width * 0.03,
+                          marginBottom: Dimensions.get('window').width * 0.03
                         }}
-                        imageStyle={{borderRadius: 10}}>
+                        imageStyle={{ borderRadius: 10 }}
+                      >
                         <View
                           style={{
                             position: 'absolute',
@@ -782,12 +815,13 @@ const Edit = (props) => {
                             borderRadius: 50,
                             backgroundColor: 'rgba(0,0,0,0.5)',
                             justifyContent: 'center',
-                            alignItems: 'center',
-                          }}>
+                            alignItems: 'center'
+                          }}
+                        >
                           <Image
                             source={require('../src/assets/img/_ic_del_small.png')}
-                            style={{width: 15, height: 15}}
-                            resizeMode="center"
+                            style={{ width: 15, height: 15 }}
+                            resizeMode='center'
                           />
                         </View>
                       </ImageBackground>
@@ -804,15 +838,16 @@ const Edit = (props) => {
                   height: Dimensions.get('window').width * 0.27,
                   borderWidth: 1,
                   borderColor: '#E3E3E3',
-                  borderRadius: 15,
+                  borderRadius: 15
                 }}
-                onPress={checkPhotos}>
+                onPress={checkPhotos}
+              >
                 <Image
                   source={require('../src/assets/img/ic_photo.png')}
-                  resizeMode="contain"
+                  resizeMode='contain'
                   style={{
                     width: 70,
-                    height: 70,
+                    height: 70
                   }}
                 />
               </TouchableOpacity>
@@ -822,8 +857,8 @@ const Edit = (props) => {
               <Form>
                 <Textarea
                   rowSpan={7}
-                  placeholder="텍스트를 입력해주세요"
-                  placeholderTextColor="#E3E3E3"
+                  placeholder='텍스트를 입력해주세요'
+                  placeholderTextColor='#E3E3E3'
                   value={talkContent}
                   style={{
                     borderStyle: 'solid',
@@ -831,7 +866,7 @@ const Edit = (props) => {
                     borderColor: '#eee',
                     borderRadius: 10,
                     paddingLeft: 15,
-                    marginBottom: 20,
+                    marginBottom: 20
                   }}
                   onChangeText={(text) => setTalkContent(text)}
                 />
@@ -842,8 +877,9 @@ const Edit = (props) => {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'center',
-            }}>
+              justifyContent: 'center'
+            }}
+          >
             <TouchableOpacity activeOpacity={0.7} onPress={modifyTalk}>
               <Text
                 style={{
@@ -852,8 +888,9 @@ const Edit = (props) => {
                   paddingVertical: 15,
                   borderRadius: 30,
                   fontSize: 18,
-                  color: '#fff',
-                }}>
+                  color: '#fff'
+                }}
+              >
                 수정하기
               </Text>
             </TouchableOpacity>
@@ -861,7 +898,7 @@ const Edit = (props) => {
         </Content>
       </ScrollView>
     </Container>
-  );
+  )
 };
 
-export default Edit;
+export default Edit

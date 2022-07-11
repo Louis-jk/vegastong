@@ -196,7 +196,7 @@ const SearchList = (props) => {
                 ) : null}
                 {item.ar_tag_cafe == '1' ? (
                   <View style={styles.tags}>
-                    <Text style={styles.tagsText}>카페</Text>
+                    <Text style={styles.tagsText}>카페/주점</Text>
                   </View>
                 ) : null}
                 {item.ar_tag_shop == '1' ? (
@@ -366,7 +366,7 @@ const SearchList = (props) => {
                 ) : null}
                 {item.ar_tag_cafe == '1' ? (
                   <View style={styles.tags}>
-                    <Text style={styles.tagsText}>카페</Text>
+                    <Text style={styles.tagsText}>카페/주점</Text>
                   </View>
                 ) : null}
                 {item.ar_tag_shop == '1' ? (
@@ -543,7 +543,7 @@ const SearchList = (props) => {
                       : tag == 'restaurant'
                       ? '맛집🍿'
                       : tag == 'cafe'
-                      ? '카페🍹'
+                      ? '카페/주점🍹'
                       : tag == 'shop'
                       ? '쇼핑💍'
                       : null

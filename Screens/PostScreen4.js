@@ -32,8 +32,7 @@ const adPostGallery = [
     title: '공주 한옥테마여행 다녀왔어요! 너무 재미있었어요!',
     avatar: {
       profile: {
-        uri:
-          'https://post.healthline.com/wp-content/uploads/2020/09/2263-black_woman_laughing-1200x628-FACEBOOK-1200x628.jpg',
+        uri: 'https://post.healthline.com/wp-content/uploads/2020/09/2263-black_woman_laughing-1200x628-FACEBOOK-1200x628.jpg',
       },
       name: '비앙카',
     },
@@ -41,14 +40,12 @@ const adPostGallery = [
   {
     id: 2,
     image: {
-      uri:
-        'https://media.triple.guide/triple-cms/c_limit,f_auto,h_1024,w_1024/31b9de93-4a29-4f3f-9bc6-ad08c7e4cbb4.jpeg',
+      uri: 'https://media.triple.guide/triple-cms/c_limit,f_auto,h_1024,w_1024/31b9de93-4a29-4f3f-9bc6-ad08c7e4cbb4.jpeg',
     },
     title: '한옥테마 여행 좋은거 같음',
     avatar: {
       profile: {
-        uri:
-          'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
+        uri: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
       },
       name: '제임스',
     },
@@ -56,14 +53,12 @@ const adPostGallery = [
   {
     id: 3,
     image: {
-      uri:
-        'https://lh3.googleusercontent.com/proxy/-Inj-ASWyjVMVv_55jmx_xLtrmsgkTQaX5iLtLugn7OgQ5RI5bpmWRZKlST8KCrdwXxKMVwKv38OPvjgmEcWvDuk--NfWQJfDleeymxEiTjIGkZ-QWe_qUEtUsLRUy7bj_C8FJsn',
+      uri: 'https://lh3.googleusercontent.com/proxy/-Inj-ASWyjVMVv_55jmx_xLtrmsgkTQaX5iLtLugn7OgQ5RI5bpmWRZKlST8KCrdwXxKMVwKv38OPvjgmEcWvDuk--NfWQJfDleeymxEiTjIGkZ-QWe_qUEtUsLRUy7bj_C8FJsn',
     },
     title: '한옥스테이도 있으면 좋을꺼 같아요.',
     avatar: {
       profile: {
-        uri:
-          'https://www.mountelizabeth.com.sg/images/default-source/default-album/young-woman-smile-tnb4acce7749bf63eeab9aff0b00dba087.jpg?sfvrsn=1d13ad1e_0',
+        uri: 'https://www.mountelizabeth.com.sg/images/default-source/default-album/young-woman-smile-tnb4acce7749bf63eeab9aff0b00dba087.jpg?sfvrsn=1d13ad1e_0',
       },
       name: '제시카',
     },
@@ -71,14 +66,12 @@ const adPostGallery = [
   {
     id: 4,
     image: {
-      uri:
-        'https://images.unsplash.com/photo-1529883406927-e996c9ae3353?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80',
+      uri: 'https://images.unsplash.com/photo-1529883406927-e996c9ae3353?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1350&q=80',
     },
     title: '할머니집 한옥느낌',
     avatar: {
       profile: {
-        uri:
-          'https://bostonglobe-prod.cdn.arcpublishing.com/resizer/95u6LP-Az4FiqEEoWCi2T1_mVwk=/1440x0/arc-anglerfish-arc2-prod-bostonglobe.s3.amazonaws.com/public/J2WKBDBAH4I6VD5FPDKWPPOHYQ.jpg',
+        uri: 'https://bostonglobe-prod.cdn.arcpublishing.com/resizer/95u6LP-Az4FiqEEoWCi2T1_mVwk=/1440x0/arc-anglerfish-arc2-prod-bostonglobe.s3.amazonaws.com/public/J2WKBDBAH4I6VD5FPDKWPPOHYQ.jpg',
       },
       name: '엠마',
     },
@@ -86,14 +79,12 @@ const adPostGallery = [
   {
     id: 5,
     image: {
-      uri:
-        'https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA3-unTTC3pNmtukkRtYWx7kC_R6KXMMRPIk0WZ2K223v7cABt1DMvjkpcLWRm3cLNUkp88AYEO_yzhBDAlvJIsXVPN8_pH37VutddK75n4Bj_k0-YCEPuEy0a5-YbUFWtEhDbN75fwxfgQ3mVULOJSKnlGhRLCuwL-jTnyojTrCtxPhvgmjKxkw&4u16383&5m1&2e1&callback=none&client=google-maps-pro&token=50664',
+      uri: 'https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAA3-unTTC3pNmtukkRtYWx7kC_R6KXMMRPIk0WZ2K223v7cABt1DMvjkpcLWRm3cLNUkp88AYEO_yzhBDAlvJIsXVPN8_pH37VutddK75n4Bj_k0-YCEPuEy0a5-YbUFWtEhDbN75fwxfgQ3mVULOJSKnlGhRLCuwL-jTnyojTrCtxPhvgmjKxkw&4u16383&5m1&2e1&callback=none&client=google-maps-pro&token=50664',
     },
     title: '고오급진 한옥마을',
     avatar: {
       profile: {
-        uri:
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQhBMyFnyzLxKvKaXdMCnbLhsnzOr3H8zIq-w&usqp=CAU',
+        uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQhBMyFnyzLxKvKaXdMCnbLhsnzOr3H8zIq-w&usqp=CAU',
       },
       name: '가브리엘',
     },
@@ -101,14 +92,12 @@ const adPostGallery = [
   {
     id: 6,
     image: {
-      uri:
-        'https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAAI_YkmWB-z1Jz7iUL-jo5BssQFifQuJZ40B4AsYPL5iu42l8HnhFz2isv5zEoogaf_7KjsTpHNZJxy5rwqqLgWVS7OS1C7qg2LsFMPrgIGMkYqvtJayVvpVyu1YJghFs_EhDeZPELTG82rQhBIb0oJMwmGhSv2TlArIESguDO4jQ6-jUG0i3pOg&4u16383&5m1&2e1&callback=none&client=google-maps-pro&token=43379',
+      uri: 'https://maps.googleapis.com/maps/api/place/js/PhotoService.GetPhoto?1sCmRaAAAAI_YkmWB-z1Jz7iUL-jo5BssQFifQuJZ40B4AsYPL5iu42l8HnhFz2isv5zEoogaf_7KjsTpHNZJxy5rwqqLgWVS7OS1C7qg2LsFMPrgIGMkYqvtJayVvpVyu1YJghFs_EhDeZPELTG82rQhBIb0oJMwmGhSv2TlArIESguDO4jQ6-jUG0i3pOg&4u16383&5m1&2e1&callback=none&client=google-maps-pro&token=43379',
     },
     title: '한옥의 정취가 물씬',
     avatar: {
       profile: {
-        uri:
-          'https://manofmany.com/wp-content/uploads/2019/06/50-Long-Haircuts-Hairstyle-Tips-for-Men-5.jpg',
+        uri: 'https://manofmany.com/wp-content/uploads/2019/06/50-Long-Haircuts-Hairstyle-Tips-for-Men-5.jpg',
       },
       name: '조나단',
     },
@@ -172,7 +161,7 @@ const PostScreen4 = ({navigation, route}) => {
                   paddingHorizontal: 15,
                   marginRight: 5,
                 }}>
-                <Text style={{fontSize: 15}}>카페</Text>
+                <Text style={{fontSize: 15}}>카페/주점</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 activeOpacity={1}
@@ -180,12 +169,12 @@ const PostScreen4 = ({navigation, route}) => {
                 style={{
                   borderStyle: 'solid',
                   borderWidth: 1,
-                  borderColor: '#666666',
+                  borderColor: '#4A26F4',
                   borderRadius: 20,
                   paddingVertical: 10,
                   paddingHorizontal: 15,
                   marginRight: 5,
-                  backgroundColor: '#666666',
+                  backgroundColor: '#4A26F4',
                 }}>
                 <Text style={{fontSize: 15, color: '#fff'}}>쇼핑 x</Text>
               </TouchableOpacity>

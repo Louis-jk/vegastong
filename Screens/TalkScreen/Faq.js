@@ -453,7 +453,7 @@ const Faq = (props) => {
               >
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     color: isTagTravel ? '#fff' : '#E3E3E3'
                   }}
                 >
@@ -477,7 +477,7 @@ const Faq = (props) => {
               >
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     color: isTagRestaurant ? '#fff' : '#E3E3E3'
                   }}
                 >
@@ -501,11 +501,11 @@ const Faq = (props) => {
               >
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     color: isTagCafe ? '#fff' : '#E3E3E3'
                   }}
                 >
-                  {isTagCafe ? '카페 x' : '카페'}
+                  {isTagCafe ? '카페/주점 x' : '카페/주점'}
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -515,9 +515,9 @@ const Faq = (props) => {
                 style={{
                   paddingVertical: 10,
                   paddingHorizontal: 15,
-                  backgroundColor: isTagShop ? '#666666' : 'transparent',
+                  backgroundColor: isTagShop ? '#4A26F4' : 'transparent',
                   borderRadius: 25,
-                  borderColor: isTagShop ? '#666666' : '#E3E3E3',
+                  borderColor: isTagShop ? '#4A26F4' : '#E3E3E3',
                   borderStyle: 'solid',
                   borderWidth: 1,
                   marginRight: 5
@@ -525,7 +525,7 @@ const Faq = (props) => {
               >
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: 14,
                     color: isTagShop ? '#fff' : '#E3E3E3'
                   }}
                 >

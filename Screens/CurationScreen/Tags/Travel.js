@@ -31,15 +31,15 @@ const Travel = (props) => {
         borderColor: isActive ? '#4A26F4' : '#4A26F4',
         borderRadius: 40,
         paddingVertical: 7,
-        paddingHorizontal: 20,
+        paddingHorizontal: 18,
         marginRight: 5,
         backgroundColor: isActive ? '#4A26F4' : '#fff',
       }}>
       <Text
         style={{
-          fontSize: 15,
+          fontSize: 14,
           color: isActive ? '#fff' : '#4A26F4',
-          marginRight: isActive ? 12 : 0,
+          marginRight: isActive ? 7 : 0,
         }}>
         여행
       </Text>
