@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   Text,
@@ -6,112 +6,112 @@ import {
   Dimensions,
   Alert,
   Share,
-  Pressable,
-} from 'react-native';
-import {Container, Content} from 'native-base';
-import AutoHeightWebView from 'react-native-autoheight-webview';
-import qs from 'qs';
-import {useSelector, useDispatch} from 'react-redux';
-import moment from 'moment';
+  Pressable
+} from 'react-native'
+import { Container, Content } from 'native-base'
+import AutoHeightWebView from 'react-native-autoheight-webview'
+import qs from 'qs'
+import { useSelector, useDispatch } from 'react-redux'
+import moment from 'moment'
 
 // import KakaoSDK from '@actbase/react-native-kakaosdk';
 // import RNKakaoTest from 'react-native-kakao-test';
-import Header from '../Common/Header';
-import ScrapButton from '../Common/ScrapButton';
-import ShareButton from '../Common/ShareButton';
-import ReplyCount from '../Common/ReplyCount';
-import ReplyForm from '../Common/ReplyForm';
-import Reply from '../Reply';
-import {VegasGet, VegasPost} from '../../utils/axios.config';
+import Header from '../Common/Header'
+import ScrapButton from '../Common/ScrapButton'
+import ShareButton from '../Common/ShareButton'
+import ReplyCount from '../Common/ReplyCount'
+import ReplyForm from '../Common/ReplyForm'
+import Reply from '../Reply'
+import { VegasGet, VegasPost } from '../../utils/axios.config'
 
 const CurationDetail = (props) => {
-  const navigation = props.navigation;
-  const title = props.route.params.title;
-  const cuId = props.route.params.id;
+  const navigation = props.navigation
+  const title = props.route.params.title
+  const cuId = props.route.params.id
 
-  const [isScrapModalVisible, setScrapModalVisible] = useState(false);
-  const token = useSelector((state) => state.Reducer.token);
-  const utId = useSelector((state) => state.UserInfoReducer.utId);
+  const [isScrapModalVisible, setScrapModalVisible] = useState(false)
+  const token = useSelector((state) => state.Reducer.token)
+  const utId = useSelector((state) => state.UserInfoReducer.utId)
 
-  const toggleScrapModal = () => setScrapModalVisible(!isScrapModalVisible);
+  const toggleScrapModal = () => setScrapModalVisible(!isScrapModalVisible)
 
-  const [share, setShare] = useState(false);
-  const [isShareModalVisible, setShareModalVisible] = useState(false);
+  const [share, setShare] = useState(false)
+  const [isShareModalVisible, setShareModalVisible] = useState(false)
 
-  const toggleShare = () => setShare(!share);
-  const toggleShareModal = () => setShareModalVisible(!isShareModalVisible);
+  const toggleShare = () => setShare(!share)
+  const toggleShareModal = () => setShareModalVisible(!isShareModalVisible)
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
 
-  // 새소식 상세페이지 불러오기
-  const [curationLists, setCurationLists] = useState([]);
-  const containerRef = useRef(null);
+  // 통정보 상세페이지 불러오기
+  const [curationLists, setCurationLists] = useState([])
+  const containerRef = useRef(null)
 
   const getApi = () => {
     VegasGet(`/api/curation/get_curation/${cuId}`, {
-      headers: {authorization: `${token}`},
+      headers: { authorization: `${token}` }
     })
       .then((res) => {
         if (res.result === 'success') {
-          setCurationLists(res.data);
+          setCurationLists(res.data)
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
-  console.log('curationLists : ', curationLists);
+  console.log('curationLists : ', curationLists)
 
   // 해당 페이지 전체 댓글 불러오기
-  const [replyLists, setReplyLists] = useState([]);
+  const [replyLists, setReplyLists] = useState([])
   const getReplyAPI = () => {
     VegasGet(
-      `/api/word/get_words?wo_category=curation&wo_ref_id=${cuId}&page=1`,
+      `/api/word/get_words?wo_category=curation&wo_ref_id=${cuId}&page=1`
     )
       .then((res) => {
         if (res.result === 'success') {
-          setReplyLists(res.data);
+          setReplyLists(res.data)
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   // 내 스크랩 불러오기
-  const [myScraps, setMyScraps] = useState([]);
+  const [myScraps, setMyScraps] = useState([])
   const getMyScrap = () => {
     VegasPost(
       '/api/user/get_my_scraps',
       {},
-      {headers: {authorization: `${token}`}},
+      { headers: { authorization: `${token}` } }
     )
       .then((res) => {
         if (res.result === 'success') {
           // setMyScraps(res.data.scraps); 수정
           const matchedScrap = res.data.scraps.find(
-            (ms) => ms.sc_curation_id == cuId,
-          );
+            (ms) => ms.sc_curation_id == cuId
+          )
           if (matchedScrap.length !== 0) {
-            setScrap(true);
-            setMyScraps(matchedScrap);
+            setScrap(true)
+            setMyScraps(matchedScrap)
           } else {
-            setScrap(false);
+            setScrap(false)
           }
         } else {
-          return false;
+          return false
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   useEffect(() => {
-    containerRef.current?._root.scrollToPosition(0, 0);
-    getApi();
-    getReplyAPI();
-  }, [cuId]);
+    containerRef.current?._root.scrollToPosition(0, 0)
+    getApi()
+    getReplyAPI()
+  }, [cuId])
 
-  console.log('myScraps', myScraps);
+  console.log('myScraps', myScraps)
 
   // 스크랩 온/오프
-  const [scrap, setScrap] = useState(false);
+  const [scrap, setScrap] = useState(false)
 
   const toggleScrap = () => {
     if (curationLists.my_scrap === 0 || curationLists.my_scrap === null) {
@@ -119,16 +119,16 @@ const CurationDetail = (props) => {
         '/api/user/add_scrap',
         qs.stringify({
           sc_category: 'curation',
-          sc_ref_id: cuId,
+          sc_ref_id: cuId
         }),
-        {headers: {authorization: `${token}`}},
+        { headers: { authorization: `${token}` } }
       )
         .then((res) => {
           if (res.result === 'success') {
-            getApi();
+            getApi()
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     } else if (
       curationLists.my_scrap !== 0 ||
       curationLists.my_scrap !== null
@@ -136,22 +136,22 @@ const CurationDetail = (props) => {
       VegasPost(
         `/api/user/remove_scrap/${curationLists.my_scrap.sc_id}`,
         {},
-        {headers: {authorization: `${token}`}},
+        { headers: { authorization: `${token}` } }
       )
         .then((res) => {
           if (res.result === 'success') {
-            getApi();
+            getApi()
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
     } else {
-      return false;
+      return false
     }
-  };
+  }
 
   const DelOK = (e) => {
     VegasGet(`/api/word/remove_word/${e}`, {
-      headers: {authorization: `${token}`},
+      headers: { authorization: `${token}` }
     })
       .then((res) => {
         if (res.result === 'success') {
@@ -162,19 +162,19 @@ const CurationDetail = (props) => {
               {
                 text: '머무르기',
                 onPress: () => {
-                  getApi();
-                  getReplyAPI();
-                },
+                  getApi()
+                  getReplyAPI()
+                }
               },
               {
                 text: '나가기',
-                onPress: () => navigation.navigate('home'),
-              },
-            ],
-          );
+                onPress: () => navigation.navigate('home')
+              }
+            ]
+          )
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   const ReplyDel = (e) => {
@@ -182,39 +182,39 @@ const CurationDetail = (props) => {
       '댓글을 정말 삭제하시겠습니까?',
       '삭제된 댓글은 복원되지 않습니다.',
       [
-        {text: '삭제', onPress: () => DelOK(e)},
-        {text: '취소', onPress: () => {}},
-      ],
-    );
+        { text: '삭제', onPress: () => DelOK(e) },
+        { text: '취소', onPress: () => {} }
+      ]
+    )
   };
 
   const favorLoginInfo = () => {
     Alert.alert('회원만 이용하실 수 있습니다.', '로그인 하시겠습니까?', [
       {
         text: '확인',
-        onPress: () => navigation.navigate('login'),
+        onPress: () => navigation.navigate('login')
       },
       {
         text: '취소',
-        onPress: () => {},
-      },
-    ]);
+        onPress: () => {}
+      }
+    ])
   };
 
   const addLikeBtn = () => {
     VegasPost(
       '/api/curation/toggle_favor/',
       qs.stringify({
-        cuId,
+        cuId
       }),
-      {headers: {authorization: `${token}`}},
+      { headers: { authorization: `${token}` } }
     )
       .then((res) => {
         if (res.result === 'success') {
-          getApi();
+          getApi()
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err))
   };
 
   // const shareKakao = () => {
@@ -226,10 +226,10 @@ const CurationDetail = (props) => {
     try {
       const result = await Share.share({
         title: '베가스통',
-        message: `베가스통의 새소식을 공유합니다! 링크: https://dmonster1826.cafe24.com/home/curation_link?cu_id=${cuId}`,
+        message: `베가스통의 통정보를 공유합니다! 링크: https://dmonster1826.cafe24.com/home/curation_link?cu_id=${cuId}`,
         // url: `intent://curation_detail/${title}/${cuId}/#Intent; scheme=vegastong; package=com.dmonster.vegastong;`,
-        url: `https://dmonster1826.cafe24.com/home/curation_link?cu_id=${cuId}`,
-      });
+        url: `https://dmonster1826.cafe24.com/home/curation_link?cu_id=${cuId}`
+      })
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // shared with activity type of result.activityType
@@ -240,13 +240,13 @@ const CurationDetail = (props) => {
         // dismissed
       }
     } catch (error) {
-      Alert.alert(error.message);
+      Alert.alert(error.message)
     }
-  };
+  }
 
   const onWebViewMessage = (evt) => {
-    console.log('evt.nativeEvent.data?', evt.nativeEvent.data);
-    console.log('evt.nativeEvent.data Height?', evt.nativeEvent.data.height);
+    console.log('evt.nativeEvent.data?', evt.nativeEvent.data)
+    console.log('evt.nativeEvent.data Height?', evt.nativeEvent.data.height)
   };
 
   // console.log('curationLists ?', curationLists);
@@ -256,11 +256,11 @@ const CurationDetail = (props) => {
       <Header navigation={navigation} title={title} />
 
       <Content ref={containerRef}>
-        <View style={{paddingHorizontal: 20, marginTop: 10}}>
-          <Text style={{fontSize: 20, fontWeight: 'bold', paddingBottom: 10}}>
+        <View style={{ paddingHorizontal: 20, marginTop: 10 }}>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', paddingBottom: 10 }}>
             {curationLists.cu_title}
           </Text>
-          <Text style={{fontSize: 16, color: '#666666'}}>
+          <Text style={{ fontSize: 16, color: '#666666' }}>
             {moment(curationLists.ar_updated_at).format('YYYY/MM/DD')}
           </Text>
         </View>
@@ -269,18 +269,18 @@ const CurationDetail = (props) => {
             width: '100%',
             height: 1,
             backgroundColor: '#EFEFEF',
-            marginVertical: 20,
+            marginVertical: 20
           }}
         />
 
         <AutoHeightWebView
           source={{
-            html: `<style>img {max-width: 100%;}</style>${curationLists.cu_content}`,
+            html: `<style>img {max-width: 100%;}</style>${curationLists.cu_content}`
           }}
           style={{
             width: Dimensions.get('window').width,
             // marginHorizontal: 20,
-            marginBottom: 50,
+            marginBottom: 50
           }}
           customScript={"document.body.style.background = 'transparent';"}
           customStyle={`
@@ -303,20 +303,19 @@ const CurationDetail = (props) => {
             {
               href: 'cssfileaddress',
               type: 'text/css',
-              rel: 'stylesheet',
-            },
+              rel: 'stylesheet'
+            }
           ]}
           scalesPageToFit={false}
-          viewportContent="width=device-width, user-scalable=no"
+          viewportContent='width=device-width, user-scalable=no'
           onMessage={onWebViewMessage}
         />
         {curationLists.cu_link_id !== null ? (
           <TouchableOpacity
             onPress={() =>
               navigation.navigate('TripDetail', {
-                id: curationLists.cu_link_id,
-              })
-            }
+                id: curationLists.cu_link_id
+              })}
             style={{
               backgroundColor: '#F8F8F8',
               justifyContent: 'center',
@@ -324,12 +323,13 @@ const CurationDetail = (props) => {
               paddingVertical: 15,
               marginHorizontal: 20,
               borderRadius: 10,
-              marginBottom: 50,
-            }}>
-            <Text style={{color: '#4A26F4'}}>자세히보기</Text>
+              marginBottom: 50
+            }}
+          >
+            <Text style={{ color: '#4A26F4' }}>자세히보기</Text>
           </TouchableOpacity>
         ) : null}
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
           {token ? (
             <ScrapButton
               scrap={curationLists.my_scrap}
@@ -337,7 +337,7 @@ const CurationDetail = (props) => {
               id={cuId}
             />
           ) : null}
-          <View style={{width: 10}} />
+          <View style={{ width: 10 }} />
           <ShareButton
             toggleShareModal={toggleShareModal}
             // shareKakao={Platform.OS === 'ios' ? linkCustom : copyClipBoard}
@@ -358,13 +358,14 @@ const CurationDetail = (props) => {
             </Text>
           </View>
         )} */}
-        <View style={{marginHorizontal: 20, marginBottom: 10}}>
+        <View style={{ marginHorizontal: 20, marginBottom: 10 }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              alignItems: 'baseline',
-            }}>
+              alignItems: 'baseline'
+            }}
+          >
             {/* <ReplyCount count={curationLists.wo_count} /> */}
 
             {/* <TouchableOpacity
@@ -393,13 +394,13 @@ const CurationDetail = (props) => {
           {token ? (
             <ReplyForm
               wo_ref_id={cuId}
-              wo_category="curation"
+              wo_category='curation'
               navigation={navigation}
               getReplyAPI={getReplyAPI}
               getApi={getApi}
             />
           ) : (
-            <Text style={{fontSize: 16, color: '#666666', marginTop: 20}}>
+            <Text style={{ fontSize: 16, color: '#666666', marginTop: 20 }}>
               댓글 작성은 회원만 이용하실 수 있습니다.
             </Text>
           )}
@@ -411,8 +412,9 @@ const CurationDetail = (props) => {
             paddingHorizontal: 20,
             flexDirection: 'row',
             justifyContent: 'flex-start',
-            marginBottom: 10,
-          }}>
+            marginBottom: 10
+          }}
+        >
           <ReplyCount count={curationLists.wo_count} />
         </View>
         {/* 댓글 카운트 */}
@@ -420,7 +422,7 @@ const CurationDetail = (props) => {
         <Pressable
           style={{
             borderWidth: 0.5,
-            borderColor: '#CCCCCC',
+            borderColor: '#CCCCCC'
           }}
         />
 
@@ -433,7 +435,7 @@ const CurationDetail = (props) => {
         {/* 댓글 리스트 */}
       </Content>
     </Container>
-  );
+  )
 };
 
-export default CurationDetail;
+export default CurationDetail
