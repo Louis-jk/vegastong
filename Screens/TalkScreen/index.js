@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -8,33 +8,47 @@ import {
   StyleSheet,
   Alert,
   FlatList,
-  ActivityIndicator
-} from 'react-native'
-import { Container, Content, Thumbnail } from 'native-base'
-import { useSelector } from 'react-redux'
-import { TabView, SceneMap } from 'react-native-tab-view'
-import AsyncStorage from '@react-native-community/async-storage'
-import Config from 'react-native-config'
-import 'moment/locale/ko'
-import moment from 'moment'
-import BottomTabs from '../Common/BottomTabs'
-import SearchBar from '../Common/SearchBar'
+  ActivityIndicator,
+  Linking,
+} from 'react-native';
+import {Container, Content, Thumbnail} from 'native-base';
+import {useSelector} from 'react-redux';
+import {TabView, SceneMap} from 'react-native-tab-view';
+import AsyncStorage from '@react-native-community/async-storage';
+import Config from 'react-native-config';
+import 'moment/locale/ko';
+import moment from 'moment';
+import BottomTabs from '../Common/BottomTabs';
+import SearchBar from '../Common/SearchBar';
 
-import { ScrollView } from 'react-native-gesture-handler'
-import qs from 'qs'
-import { VegasPost } from '../../utils/axios.config'
+import {ScrollView} from 'react-native-gesture-handler';
+import qs from 'qs';
+import {VegasPost, VegasGet} from '../../utils/axios.config';
 
-const BASE_URL = Config.BASE_URL
-const { window } = Dimensions.get('window')
+const BASE_URL = Config.BASE_URL;
+const {window} = Dimensions.get('window');
 
+// 자유게시판
 const Event = (props) => {
-  const navigation = props.navigation
-  const [events, setEvents] = useState([])
-  const userId = props.userId
-  const [isLoading, setIsLoading] = useState(true)
-  const [fetchingStatus, setFetchingStatus] = useState(false)
-  const [reviewCurrentPage, setReviewCurrentPage] = useState(0)
-  const [isToTop, setIsToTopBtn] = useState(false)
+  const navigation = props.navigation;
+  const [events, setEvents] = useState([]);
+  const userId = props.userId;
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchingStatus, setFetchingStatus] = useState(false);
+  const [reviewCurrentPage, setReviewCurrentPage] = useState(0);
+  const [isToTop, setIsToTopBtn] = useState(false);
+
+  // 광고 배너 불러오기
+  const [banner, setBanner] = useState(null);
+  const getBannerAPI = () => {
+    VegasGet(`/api/banner/get_location_banners/banner6`)
+      .then((res) => {
+        if (res.result === 'success') {
+          setBanner(res.data[0]);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const getEventAPI = async () => {
     try {
@@ -42,65 +56,72 @@ const Event = (props) => {
         '/api/talk/get_talks',
         qs.stringify({
           tk_division: 'event',
-          page: fetchingStatus ? reviewCurrentPage + 1 : false
-        })
-      )
+          page: fetchingStatus ? reviewCurrentPage + 1 : false,
+        }),
+      );
 
       if (res.result === 'success') {
-        setEvents(events.concat(res.data))
-        setFetchingStatus(res.data.length !== 0)
-        setIsLoading(false)
-        setReviewCurrentPage(reviewCurrentPage + 1)
+        setEvents(events.concat(res.data));
+        setFetchingStatus(res.data.length !== 0);
+        setIsLoading(false);
+        setReviewCurrentPage(reviewCurrentPage + 1);
       } else {
-        setFetchingStatus(false)
-        setIsLoading(true)
-        setReviewCurrentPage(reviewCurrentPage + 1)
+        setFetchingStatus(false);
+        setIsLoading(true);
+        setReviewCurrentPage(reviewCurrentPage + 1);
       }
     } catch (err) {
-      console.log('err', err)
+      console.log('err', err);
     }
-  }
+  };
 
   useEffect(() => {
-    getEventAPI()
-    foucsNav()
-  }, [])
+    getEventAPI();
+    foucsNav();
+    getBannerAPI();
+
+    return () => {
+      getEventAPI();
+      foucsNav();
+      getBannerAPI();
+    };
+  }, []);
 
   const foucsNav = () => {
     props.navigation.addListener('focus', () => {
-      getEventAPI()
-    })
+      getEventAPI();
+    });
   };
 
   const eventHandleScroll = (e) => {
     const scrollY =
-      e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height
+      e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
     if (scrollY >= e.nativeEvent.contentSize.height - 250) {
       // setReviewCurrentPage(reviewCurrentPage + 1);
-      getEventAPI()
-      setIsToTopBtn(true)
+      getEventAPI();
+      setIsToTopBtn(true);
     }
-  }
+  };
 
   const renderFooter = () => {
     return (
       <View>
         {fetchingStatus && isLoading ? (
           <ActivityIndicator
-            size='large'
-            color='#4A26F4'
-            style={{ marginLeft: 4 }}
+            size="large"
+            color="#4A26F4"
+            style={{marginLeft: 4}}
           />
         ) : null}
       </View>
-    )
+    );
   };
 
-  const eventRenderRow = ({ item }) => {
+  const eventRenderRow = ({item}) => {
     return (
-      <View style={{ position: 'relative' }}>
+      <View style={{position: 'relative'}}>
         <View key={item.tk_id}>
-          <View style={{ marginHorizontal: 20, marginTop: 20 }}>
+          <View style={{marginHorizontal: 20, marginTop: 20}}>
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={() =>
@@ -115,9 +136,9 @@ const Event = (props) => {
                   tk_content: item.tk_content,
                   files: item.files,
                   wo_count: item.wo_count,
-                  ar_updated_at: item.ar_updated_at
-                })}
-            >
+                  ar_updated_at: item.ar_updated_at,
+                })
+              }>
               {item.tk_user_id === userId ? (
                 <View
                   style={{
@@ -131,16 +152,14 @@ const Event = (props) => {
                     borderWidth: 1,
                     borderColor: '#eaeaea',
                     backgroundColor: '#fff',
-                    borderRadius: 10
-                  }}
-                >
+                    borderRadius: 10,
+                  }}>
                   <Text
                     style={{
                       fontSize: 12,
                       color: '#666666',
-                      letterSpacing: -1
-                    }}
-                  >
+                      letterSpacing: -1,
+                    }}>
                     내가 쓴 글
                   </Text>
                 </View>
@@ -150,41 +169,39 @@ const Event = (props) => {
                   flexDirection: 'row',
                   justifyContent: 'flex-start',
                   alignItems: 'center',
-                  marginBottom: 20
-                }}
-              >
+                  marginBottom: 20,
+                }}>
                 {!item.ut_image ? (
                   <Thumbnail
                     source={require('../src/assets/img/pr_no_img.png')}
                     style={styles.thumbnailStyle}
-                    resizeMode='cover'
+                    resizeMode="cover"
                   />
                 ) : (
                   <Thumbnail
                     source={{
-                      uri: `${BASE_URL}/${item.ut_image}`
+                      uri: `${BASE_URL}/${item.ut_image}`,
                     }}
                     style={styles.thumbnailStyle}
-                    resizeMode='cover'
+                    resizeMode="cover"
                   />
                 )}
                 <View>
-                  <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+                  <View style={{flexDirection: 'row', marginBottom: 5}}>
                     <Text
                       style={{
                         fontSize: 16,
                         color: '#4A26F4',
-                        marginRight: 5
-                      }}
-                    >
+                        marginRight: 5,
+                      }}>
                       자유게시판
                     </Text>
-                    <Text style={{ fontSize: 16, color: '#000' }}>
+                    <Text style={{fontSize: 16, color: '#000'}}>
                       {item.ut_nickname}
                     </Text>
                   </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ fontSize: 16, color: '#888' }}>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={{fontSize: 16, color: '#888'}}>
                       {moment(item.ar_updated_at).fromNow()}
                     </Text>
                     <View
@@ -192,7 +209,7 @@ const Event = (props) => {
                         width: 1,
                         height: 20,
                         backgroundColor: '#E3E3E3',
-                        marginHorizontal: 7
+                        marginHorizontal: 7,
                       }}
                     />
                     <Image
@@ -201,21 +218,20 @@ const Event = (props) => {
                         width: 17,
                         height: 17,
                         marginTop: 2,
-                        marginRight: 5
+                        marginRight: 5,
                       }}
-                      resizeMode='contain'
+                      resizeMode="contain"
                     />
-                    <Text style={{ fontSize: 16, color: '#888' }}>
+                    <Text style={{fontSize: 16, color: '#888'}}>
                       {item.wo_count}
                     </Text>
                   </View>
                 </View>
               </View>
               <Text
-                style={{ fontSize: 15, color: '#888', lineHeight: 20 }}
-                lineBreakMode='tail'
-                numberOfLines={2}
-              >
+                style={{fontSize: 15, color: '#888', lineHeight: 20}}
+                lineBreakMode="tail"
+                numberOfLines={2}>
                 {item.tk_content}
               </Text>
             </TouchableOpacity>
@@ -226,9 +242,8 @@ const Event = (props) => {
                 style={{
                   flexDirection: 'row',
                   paddingLeft: 20,
-                  paddingRight: 10
-                }}
-              >
+                  paddingRight: 10,
+                }}>
                 <TouchableOpacity
                   activeOpacity={0.8}
                   onPress={() =>
@@ -243,23 +258,23 @@ const Event = (props) => {
                       tk_content: item.tk_content,
                       files: item.files,
                       wo_count: item.wo_count,
-                      ar_updated_at: item.ar_updated_at
-                    })}
-                  style={{ flexDirection: 'row' }}
-                >
+                      ar_updated_at: item.ar_updated_at,
+                    })
+                  }
+                  style={{flexDirection: 'row'}}>
                   {item.files.map((file, idx) => (
                     <Image
                       key={idx}
                       source={{
-                        uri: `${BASE_URL}/${file.ft_file_path}`
+                        uri: `${BASE_URL}/${file.ft_file_path}`,
                       }}
-                      resizeMode='cover'
+                      resizeMode="cover"
                       style={{
                         width: 100,
                         height: 100,
                         borderRadius: 10,
                         marginRight: 10,
-                        marginTop: 20
+                        marginTop: 20,
                       }}
                     />
                   ))}
@@ -272,18 +287,18 @@ const Event = (props) => {
               width: window,
               height: 1,
               backgroundColor: '#eaeaea',
-              marginTop: 20
+              marginTop: 20,
             }}
           />
         </View>
       </View>
-    )
+    );
   };
 
-  const FlatListRef = useRef(null)
+  const FlatListRef = useRef(null);
 
   const ScrollTopEventHandler = () => {
-    FlatListRef.current?.scrollToOffset({ animated: true, y: 0 })
+    FlatListRef.current?.scrollToOffset({animated: true, y: 0});
   };
 
   return (
@@ -291,7 +306,7 @@ const Event = (props) => {
       {events.length > 3 ? (
         <TouchableOpacity
           activeOpacity={1}
-          hitSlop={{ top: 5, right: 5, bottom: 5, left: 5 }}
+          hitSlop={{top: 5, right: 5, bottom: 5, left: 5}}
           onPress={ScrollTopEventHandler}
           style={{
             position: 'absolute',
@@ -307,17 +322,15 @@ const Event = (props) => {
             paddingVertical: 2,
             marginBottom: 20,
             zIndex: 5,
-            elevation: 0
-          }}
-        >
+            elevation: 0,
+          }}>
           <Text
             style={{
               fontSize: 18,
               fontWeight: 'bold',
               color: '#222',
-              marginBottom: 2
-            }}
-          >
+              marginBottom: 2,
+            }}>
             Top
           </Text>
         </TouchableOpacity>
@@ -327,6 +340,10 @@ const Event = (props) => {
         data={events}
         ref={FlatListRef}
         renderItem={eventRenderRow}
+        style={{
+          marginBottom: banner ? 74 : 0,
+          minHeight: Dimensions.get('window').height - 286,
+        }}
         keyExtractor={(list, index) => index.toString()}
         onScroll={fetchingStatus ? (event) => eventHandleScroll(event) : false}
         ListFooterComponent={renderFooter}
@@ -339,85 +356,126 @@ const Event = (props) => {
               width: '100%',
               minHeight: 200,
               justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
+              alignItems: 'center',
+            }}>
             <Text>등록된 데이터가 없습니다.</Text>
           </View>
         }
       />
+      {banner && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => Linking.openURL(banner.bn_url)}
+          style={{
+            display: 'flex',
+            width: '100%',
+            height: 74,
+            position: 'absolute',
+            bottom: 0,
+            zIndex: 100,
+            backgroundColor: '#fff',
+          }}>
+          <Image
+            source={{
+              uri: banner.ft_download_url,
+            }}
+            style={{width: '100%', height: '100%'}}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
     </View>
-  )
+  );
 };
 
+// 질문있어요
 const Question = (props) => {
-  const navigation = props.navigation
-  const [questions, setQuestions] = useState([])
-  const userId = props.userId
-  const [isLoading, setIsLoading] = useState(true)
-  const [fetchingStatus, setFetchingStatus] = useState(false)
-  const [reviewCurrentPage, setReviewCurrentPage] = useState(0)
+  const navigation = props.navigation;
+  const [questions, setQuestions] = useState([]);
+  const userId = props.userId;
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchingStatus, setFetchingStatus] = useState(false);
+  const [reviewCurrentPage, setReviewCurrentPage] = useState(0);
+
+  // 광고 배너 불러오기
+  const [banner, setBanner] = useState(null);
+  const getBannerAPI = () => {
+    VegasGet(`/api/banner/get_location_banners/banner7`)
+      .then((res) => {
+        if (res.result === 'success') {
+          setBanner(res.data[0]);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   const getQuestionAPI = async () => {
     await VegasPost(
       '/api/talk/get_talks',
       qs.stringify({
         tk_division: 'question',
-        page: fetchingStatus ? reviewCurrentPage + 1 : false
-      })
+        page: fetchingStatus ? reviewCurrentPage + 1 : false,
+      }),
     )
       .then((res) => {
         if (res.result === 'success') {
-          setQuestions(questions.concat(res.data))
-          setFetchingStatus(res.data.length !== 0)
-          setIsLoading(false)
-          setReviewCurrentPage(reviewCurrentPage + 1)
+          setQuestions(questions.concat(res.data));
+          setFetchingStatus(res.data.length !== 0);
+          setIsLoading(false);
+          setReviewCurrentPage(reviewCurrentPage + 1);
         } else {
-          setFetchingStatus(false)
-          setIsLoading(true)
-          setReviewCurrentPage(reviewCurrentPage + 1)
+          setFetchingStatus(false);
+          setIsLoading(true);
+          setReviewCurrentPage(reviewCurrentPage + 1);
         }
       })
-      .catch((err) => console.error(err))
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
-    getQuestionAPI()
-    foucsNav02()
-  }, [])
+    getQuestionAPI();
+    foucsNav02();
+    getBannerAPI();
+
+    return () => {
+      getQuestionAPI();
+      foucsNav02();
+      getBannerAPI();
+    };
+  }, []);
 
   const foucsNav02 = () => {
     props.navigation.addListener('focus', () => {
-      getQuestionAPI()
-    })
+      getQuestionAPI();
+    });
   };
 
   const questionHandleScroll = (e) => {
     const scrollY =
-      e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height
+      e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
     if (scrollY >= e.nativeEvent.contentSize.height - 250) {
       // setReviewCurrentPage(reviewCurrentPage + 1);
-      getQuestionAPI()
+      getQuestionAPI();
     }
-  }
+  };
 
   const renderFooter = () => {
     return (
       <View>
         {fetchingStatus && isLoading ? (
           <ActivityIndicator
-            size='large'
-            color='#4A26F4'
-            style={{ marginLeft: 4 }}
+            size="large"
+            color="#4A26F4"
+            style={{marginLeft: 4}}
           />
         ) : null}
       </View>
-    )
+    );
   };
-  const questionRenderRow = ({ item }) => {
+  const questionRenderRow = ({item}) => {
     return (
       <View key={item.tk_id}>
-        <View style={{ marginHorizontal: 20, marginTop: 20 }}>
+        <View style={{marginHorizontal: 20, marginTop: 20}}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() =>
@@ -432,9 +490,9 @@ const Question = (props) => {
                 tk_content: item.tk_content,
                 files: item.files,
                 wo_count: item.wo_count,
-                ar_updated_at: item.ar_updated_at
-              })}
-          >
+                ar_updated_at: item.ar_updated_at,
+              })
+            }>
             {item.tk_user_id === userId ? (
               <View
                 style={{
@@ -448,16 +506,14 @@ const Question = (props) => {
                   borderWidth: 1,
                   borderColor: '#eaeaea',
                   backgroundColor: '#fff',
-                  borderRadius: 10
-                }}
-              >
+                  borderRadius: 10,
+                }}>
                 <Text
                   style={{
                     fontSize: 12,
                     color: '#666666',
-                    letterSpacing: -1
-                  }}
-                >
+                    letterSpacing: -1,
+                  }}>
                   내가 쓴 글
                 </Text>
               </View>
@@ -467,41 +523,39 @@ const Question = (props) => {
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                marginBottom: 20
-              }}
-            >
+                marginBottom: 20,
+              }}>
               {!item.ut_image ? (
                 <Thumbnail
                   source={require('../src/assets/img/pr_no_img.png')}
                   style={styles.thumbnailStyle}
-                  resizeMode='cover'
+                  resizeMode="cover"
                 />
               ) : (
                 <Thumbnail
                   source={{
-                    uri: `${BASE_URL}/${item.ut_image}`
+                    uri: `${BASE_URL}/${item.ut_image}`,
                   }}
                   style={styles.thumbnailStyle}
-                  resizeMode='cover'
+                  resizeMode="cover"
                 />
               )}
               <View>
-                <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+                <View style={{flexDirection: 'row', marginBottom: 5}}>
                   <Text
                     style={{
                       fontSize: 16,
                       color: '#4A26F4',
-                      marginRight: 5
-                    }}
-                  >
+                      marginRight: 5,
+                    }}>
                     질문있어요
                   </Text>
-                  <Text style={{ fontSize: 16, color: '#000' }}>
+                  <Text style={{fontSize: 16, color: '#000'}}>
                     {item.ut_nickname}
                   </Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ fontSize: 16, color: '#888' }}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{fontSize: 16, color: '#888'}}>
                     {moment(item.ar_updated_at).fromNow()}
                   </Text>
                   <View
@@ -509,7 +563,7 @@ const Question = (props) => {
                       width: 1,
                       height: 20,
                       backgroundColor: '#E3E3E3',
-                      marginHorizontal: 7
+                      marginHorizontal: 7,
                     }}
                   />
                   <Image
@@ -518,21 +572,20 @@ const Question = (props) => {
                       width: 17,
                       height: 17,
                       marginTop: 2,
-                      marginRight: 5
+                      marginRight: 5,
                     }}
-                    resizeMode='contain'
+                    resizeMode="contain"
                   />
-                  <Text style={{ fontSize: 16, color: '#888' }}>
+                  <Text style={{fontSize: 16, color: '#888'}}>
                     {item.wo_count}
                   </Text>
                 </View>
               </View>
             </View>
             <Text
-              style={{ fontSize: 15, color: '#888', lineHeight: 20 }}
-              lineBreakMode='tail'
-              numberOfLines={2}
-            >
+              style={{fontSize: 15, color: '#888', lineHeight: 20}}
+              lineBreakMode="tail"
+              numberOfLines={2}>
               {item.tk_content}
             </Text>
           </TouchableOpacity>
@@ -543,9 +596,8 @@ const Question = (props) => {
               style={{
                 flexDirection: 'row',
                 paddingLeft: 20,
-                paddingRight: 10
-              }}
-            >
+                paddingRight: 10,
+              }}>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() =>
@@ -560,23 +612,23 @@ const Question = (props) => {
                     tk_content: item.tk_content,
                     files: item.files,
                     wo_count: item.wo_count,
-                    ar_updated_at: item.ar_updated_at
-                  })}
-                style={{ flexDirection: 'row' }}
-              >
+                    ar_updated_at: item.ar_updated_at,
+                  })
+                }
+                style={{flexDirection: 'row'}}>
                 {item.files.map((file, idx) => (
                   <Image
                     key={idx}
                     source={{
-                      uri: `${BASE_URL}/${file.ft_file_path}`
+                      uri: `${BASE_URL}/${file.ft_file_path}`,
                     }}
-                    resizeMode='cover'
+                    resizeMode="cover"
                     style={{
                       width: 100,
                       height: 100,
                       borderRadius: 10,
                       marginRight: 10,
-                      marginTop: 20
+                      marginTop: 20,
                     }}
                   />
                 ))}
@@ -589,18 +641,18 @@ const Question = (props) => {
             width: window,
             height: 1,
             backgroundColor: '#eaeaea',
-            marginTop: 20
+            marginTop: 20,
           }}
         />
       </View>
-    )
+    );
   };
 
-  const FlatListRef = useRef(null)
+  const FlatListRef = useRef(null);
 
   const ScrollTopEventHandler = () => {
-    console.log('dd')
-    FlatListRef.current?.scrollToOffset({ animated: true, y: 0 })
+    console.log('dd');
+    FlatListRef.current?.scrollToOffset({animated: true, y: 0});
   };
 
   return (
@@ -608,7 +660,7 @@ const Question = (props) => {
       {questions.length > 3 ? (
         <TouchableOpacity
           activeOpacity={1}
-          hitSlop={{ top: 5, right: 5, bottom: 5, left: 5 }}
+          hitSlop={{top: 5, right: 5, bottom: 5, left: 5}}
           onPress={ScrollTopEventHandler}
           style={{
             position: 'absolute',
@@ -624,17 +676,15 @@ const Question = (props) => {
             paddingVertical: 2,
             marginBottom: 20,
             zIndex: 5,
-            elevation: 0
-          }}
-        >
+            elevation: 0,
+          }}>
           <Text
             style={{
               fontSize: 18,
               fontWeight: 'bold',
               color: '#222',
-              marginBottom: 2
-            }}
-          >
+              marginBottom: 2,
+            }}>
             Top
           </Text>
         </TouchableOpacity>
@@ -644,6 +694,10 @@ const Question = (props) => {
         data={questions}
         ref={FlatListRef}
         renderItem={questionRenderRow}
+        style={{
+          marginBottom: banner ? 74 : 0,
+          minHeight: Dimensions.get('window').height - 286,
+        }}
         keyExtractor={(list, index) => index.toString()}
         onScroll={
           fetchingStatus ? (event) => questionHandleScroll(event) : false
@@ -658,94 +712,135 @@ const Question = (props) => {
               width: '100%',
               minHeight: 200,
               justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
+              alignItems: 'center',
+            }}>
             <Text>등록된 데이터가 없습니다.</Text>
           </View>
         }
       />
+      {banner && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => Linking.openURL(banner.bn_url)}
+          style={{
+            display: 'flex',
+            width: '100%',
+            height: 74,
+            position: 'absolute',
+            bottom: 0,
+            zIndex: 100,
+            backgroundColor: '#fff',
+          }}>
+          <Image
+            source={{
+              uri: banner.ft_download_url,
+            }}
+            style={{width: '100%', height: '100%'}}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
     </View>
-  )
+  );
 };
 
+// 여행후기
 const Review = (props) => {
-  const navigation = props.navigation
-  const [reviews, setReviews] = useState([])
-  const userId = props.userId
-  const [reviewCurrentPage, setReviewCurrentPage] = useState(1)
-  const [listData, setListData] = useState([])
-  const [rows, setRows] = useState(10)
-  const [page, setPage] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
-  const [fetchingStatus, setFetchingStatus] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
-  const [listDataNull, setListDataNull] = useState(false)
-  const [isToTop, setIsToTopBtn] = useState(false)
+  const navigation = props.navigation;
+  const [reviews, setReviews] = useState([]);
+  const userId = props.userId;
+  const [reviewCurrentPage, setReviewCurrentPage] = useState(1);
+  const [listData, setListData] = useState([]);
+  const [rows, setRows] = useState(10);
+  const [page, setPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fetchingStatus, setFetchingStatus] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [listDataNull, setListDataNull] = useState(false);
+  const [isToTop, setIsToTopBtn] = useState(false);
 
-  const today = new Date()
+  const today = new Date();
   const talkUpdatedDay = (day) => {
-    return new Date(day)
+    return new Date(day);
+  };
+
+  // 광고 배너 불러오기
+  const [banner, setBanner] = useState(null);
+  const getBannerAPI = () => {
+    VegasGet(`/api/banner/get_location_banners/banner8`)
+      .then((res) => {
+        if (res.result === 'success') {
+          setBanner(res.data[0]);
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   const getTalkReviews = async () => {
-    console.log('fetchingStatus : ', fetchingStatus)
+    console.log('fetchingStatus : ', fetchingStatus);
 
     await VegasPost(
       '/api/talk/get_talks',
       qs.stringify({
         tk_division: 'review',
-        page: fetchingStatus ? reviewCurrentPage : false
-      })
+        page: fetchingStatus ? reviewCurrentPage : false,
+      }),
     )
       .then((res) => {
-        console.log('page : ', reviewCurrentPage)
+        console.log('page : ', reviewCurrentPage);
         if (res.result === 'success') {
-          setReviews(reviews.concat(res.data))
-          setFetchingStatus(res.data.length !== 0)
-          setIsLoading(false)
-          setReviewCurrentPage(reviewCurrentPage + 1)
+          setReviews(reviews.concat(res.data));
+          setFetchingStatus(res.data.length !== 0);
+          setIsLoading(false);
+          setReviewCurrentPage(reviewCurrentPage + 1);
         } else {
-          setFetchingStatus(false)
-          setIsLoading(true)
-          setReviewCurrentPage(reviewCurrentPage + 1)
+          setFetchingStatus(false);
+          setIsLoading(true);
+          setReviewCurrentPage(reviewCurrentPage + 1);
         }
       })
-      .catch((err) => console.error(err))
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
-    getTalkReviews()
-    foucsNav03()
-  }, [])
+    getTalkReviews();
+    foucsNav03();
+    getBannerAPI();
+
+    return () => {
+      getTalkReviews();
+      foucsNav03();
+      getBannerAPI();
+    };
+  }, []);
 
   const foucsNav03 = () => {
     props.navigation.addListener('focus', () => {
-      getTalkReviews()
-    })
+      getTalkReviews();
+    });
   };
 
   const reviewHandleScroll = (e) => {
     const scrollY =
-      e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height
+      e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height;
     if (
       scrollY >= e.nativeEvent.contentSize.height - 250 &&
       fetchingStatus === true
     ) {
       // setReviewCurrentPage(reviewCurrentPage + 2);
-      getTalkReviews()
-      setIsToTopBtn(true)
+      getTalkReviews();
+      setIsToTopBtn(true);
     }
-  }
-
-  const goScrollTop = (e) => {
-    console.log('goScrollTop e :: ', e)
   };
 
-  const reviewRenderRow = ({ item }) => {
+  const goScrollTop = (e) => {
+    console.log('goScrollTop e :: ', e);
+  };
+
+  const reviewRenderRow = ({item}) => {
     return (
       <View key={item.tk_id}>
-        <View style={{ marginHorizontal: 20, marginTop: 20 }}>
+        <View style={{marginHorizontal: 20, marginTop: 20}}>
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() =>
@@ -760,9 +855,9 @@ const Review = (props) => {
                 tk_content: item.tk_content,
                 files: item.files,
                 wo_count: item.wo_count,
-                ar_updated_at: item.ar_updated_at
-              })}
-          >
+                ar_updated_at: item.ar_updated_at,
+              })
+            }>
             {item.tk_user_id === userId ? (
               <View
                 style={{
@@ -776,16 +871,14 @@ const Review = (props) => {
                   borderWidth: 1,
                   borderColor: '#eaeaea',
                   backgroundColor: '#fff',
-                  borderRadius: 10
-                }}
-              >
+                  borderRadius: 10,
+                }}>
                 <Text
                   style={{
                     fontSize: 12,
                     color: '#666666',
-                    letterSpacing: -1
-                  }}
-                >
+                    letterSpacing: -1,
+                  }}>
                   내가 쓴 글
                 </Text>
               </View>
@@ -795,41 +888,39 @@ const Review = (props) => {
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
                 alignItems: 'center',
-                marginBottom: 20
-              }}
-            >
+                marginBottom: 20,
+              }}>
               {!item.ut_image ? (
                 <Thumbnail
                   source={require('../src/assets/img/pr_no_img.png')}
                   style={styles.thumbnailStyle}
-                  resizeMode='cover'
+                  resizeMode="cover"
                 />
               ) : (
                 <Thumbnail
                   source={{
-                    uri: `${BASE_URL}/${item.ut_image}`
+                    uri: `${BASE_URL}/${item.ut_image}`,
                   }}
                   style={styles.thumbnailStyle}
-                  resizeMode='cover'
+                  resizeMode="cover"
                 />
               )}
               <View>
-                <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+                <View style={{flexDirection: 'row', marginBottom: 5}}>
                   <Text
                     style={{
                       fontSize: 16,
                       color: '#4A26F4',
-                      marginRight: 5
-                    }}
-                  >
+                      marginRight: 5,
+                    }}>
                     여행후기
                   </Text>
-                  <Text style={{ fontSize: 16, color: '#000' }}>
+                  <Text style={{fontSize: 16, color: '#000'}}>
                     {item.ut_nickname}
                   </Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={{ fontSize: 16, color: '#888' }}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={{fontSize: 16, color: '#888'}}>
                     {moment(item.ar_updated_at).fromNow()}
                   </Text>
                   <View
@@ -837,7 +928,7 @@ const Review = (props) => {
                       width: 1,
                       height: 20,
                       backgroundColor: '#E3E3E3',
-                      marginHorizontal: 7
+                      marginHorizontal: 7,
                     }}
                   />
                   <Image
@@ -846,34 +937,33 @@ const Review = (props) => {
                       width: 17,
                       height: 17,
                       marginTop: 2,
-                      marginRight: 5
+                      marginRight: 5,
                     }}
-                    resizeMode='contain'
+                    resizeMode="contain"
                   />
-                  <Text style={{ fontSize: 16, color: '#888' }}>
+                  <Text style={{fontSize: 16, color: '#888'}}>
                     {item.wo_count}
                   </Text>
                 </View>
               </View>
             </View>
             <Text
-              style={{ fontSize: 15, color: '#888', lineHeight: 20 }}
-              lineBreakMode='tail'
-              numberOfLines={2}
-            >
+              style={{fontSize: 15, color: '#888', lineHeight: 20}}
+              lineBreakMode="tail"
+              numberOfLines={2}>
               {item.tk_content}
             </Text>
           </TouchableOpacity>
         </View>
+        {/* {console.log('여행후기 컨텐츠' + item.tk_content)} */}
         {item.files ? (
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View
               style={{
                 flexDirection: 'row',
                 paddingLeft: 20,
-                paddingRight: 10
-              }}
-            >
+                paddingRight: 10,
+              }}>
               <TouchableOpacity
                 activeOpacity={0.8}
                 onPress={() =>
@@ -888,23 +978,23 @@ const Review = (props) => {
                     tk_content: item.tk_content,
                     files: item.files,
                     wo_count: item.wo_count,
-                    ar_updated_at: item.ar_updated_at
-                  })}
-                style={{ flexDirection: 'row' }}
-              >
+                    ar_updated_at: item.ar_updated_at,
+                  })
+                }
+                style={{flexDirection: 'row'}}>
                 {item.files.map((file, idx) => (
                   <Image
                     key={idx}
                     source={{
-                      uri: `${BASE_URL}/${file.ft_file_path}`
+                      uri: `${BASE_URL}/${file.ft_file_path}`,
                     }}
-                    resizeMode='cover'
+                    resizeMode="cover"
                     style={{
                       width: 100,
                       height: 100,
                       borderRadius: 10,
                       marginRight: 10,
-                      marginTop: 20
+                      marginTop: 20,
                     }}
                   />
                 ))}
@@ -917,11 +1007,11 @@ const Review = (props) => {
             width: window,
             height: 1,
             backgroundColor: '#eaeaea',
-            marginTop: 20
+            marginTop: 20,
           }}
         />
       </View>
-    )
+    );
   };
 
   const renderFooter = () => {
@@ -929,29 +1019,29 @@ const Review = (props) => {
       <View>
         {fetchingStatus && isLoading ? (
           <ActivityIndicator
-            size='large'
-            color='#4A26F4'
-            style={{ marginLeft: 4 }}
+            size="large"
+            color="#4A26F4"
+            style={{marginLeft: 4}}
           />
         ) : null}
       </View>
-    )
+    );
   };
 
-  const FlatListRef = useRef(null)
+  const FlatListRef = useRef(null);
 
   const ScrollTopEventHandler = () => {
-    FlatListRef.current?.scrollToOffset({ animated: true, y: 0 })
+    FlatListRef.current?.scrollToOffset({animated: true, y: 0});
   };
 
   return (
-    <View>
+    <View style={{position: 'relative'}}>
       {/* Review 탭(여행후기) 3번째 리스트 */}
 
       {reviews.length > 3 ? (
         <TouchableOpacity
           activeOpacity={1}
-          hitSlop={{ top: 5, right: 5, bottom: 5, left: 5 }}
+          hitSlop={{top: 5, right: 5, bottom: 5, left: 5}}
           onPress={ScrollTopEventHandler}
           style={{
             position: 'absolute',
@@ -967,17 +1057,15 @@ const Review = (props) => {
             paddingVertical: 2,
             marginBottom: 20,
             zIndex: 5,
-            elevation: 0
-          }}
-        >
+            elevation: 0,
+          }}>
           <Text
             style={{
               fontSize: 18,
               fontWeight: 'bold',
               color: '#222',
-              marginBottom: 2
-            }}
-          >
+              marginBottom: 2,
+            }}>
             Top
           </Text>
         </TouchableOpacity>
@@ -986,6 +1074,10 @@ const Review = (props) => {
         data={reviews}
         ref={FlatListRef}
         renderItem={reviewRenderRow}
+        style={{
+          marginBottom: banner ? 74 : 0,
+          minHeight: Dimensions.get('window').height - 286,
+        }}
         keyExtractor={(list, index) => index.toString()}
         onScroll={(event) => reviewHandleScroll(event)}
         ListFooterComponent={renderFooter}
@@ -998,72 +1090,93 @@ const Review = (props) => {
               width: '100%',
               minHeight: 200,
               justifyContent: 'center',
-              alignItems: 'center'
-            }}
-          >
+              alignItems: 'center',
+            }}>
             <Text>등록된 데이터가 없습니다.</Text>
           </View>
         }
       />
+      {/* {console.log('여행후기 banner', banner)} */}
+      {banner && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => Linking.openURL(banner.bn_url)}
+          style={{
+            display: 'flex',
+            width: '100%',
+            height: 74,
+            position: 'absolute',
+            bottom: 0,
+            zIndex: 100,
+            backgroundColor: '#fff',
+          }}>
+          <Image
+            source={{
+              uri: banner.ft_download_url,
+            }}
+            style={{width: '100%', height: '100%'}}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
     </View>
-  )
+  );
 };
 
-const initialLayout = { width: Dimensions.get('window').width }
+const initialLayout = {width: Dimensions.get('window').width};
 
-const TalkScreen = ({ navigation, route }) => {
-  const [userToken, setUserToken] = useState(null)
+const TalkScreen = ({navigation, route}) => {
+  const [userToken, setUserToken] = useState(null);
 
-  const userId = useSelector((state) => state.UserInfoReducer.ut_id)
+  const userId = useSelector((state) => state.UserInfoReducer.ut_id);
 
   const getToken = async () => {
     await AsyncStorage.getItem('@vegasTongToken', (err, result) => {
       try {
         if (result !== null) {
-          setUserToken(result)
+          setUserToken(result);
         }
         if (result === null) {
-          console.log('토큰값이 없습니다. :', result)
+          console.log('토큰값이 없습니다. :', result);
         }
       } catch {
-        console.log('문제가 있습니다. : ', err)
+        console.log('문제가 있습니다. : ', err);
       }
-    })
+    });
   };
 
   useEffect(() => {
-    getToken()
-  }, [])
+    getToken();
+  }, []);
 
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'first', title: '자유게시판', navigation: navigation },
-    { key: 'second', title: '질문있어요', navigation: navigation },
-    { key: 'third', title: '여행후기', navigation: navigation }
-  ])
+    {key: 'first', title: '자유게시판', navigation: navigation},
+    {key: 'second', title: '질문있어요', navigation: navigation},
+    {key: 'third', title: '여행후기', navigation: navigation},
+  ]);
 
-  const renderScene = ({ route }) => {
+  const renderScene = ({route}) => {
     switch (route.key) {
       case 'first':
-        return <Event navigation={navigation} userId={userId} />
+        return <Event navigation={navigation} userId={userId} />;
       case 'second':
-        return <Question navigation={navigation} userId={userId} />
+        return <Question navigation={navigation} userId={userId} />;
       case 'third':
-        return <Review navigation={navigation} userId={userId} />
+        return <Review navigation={navigation} userId={userId} />;
     }
-  }
+  };
 
   const TabBar = (props) => {
-    const { tabIndex, jumpTo } = props
+    const {tabIndex, jumpTo} = props;
 
     return (
       <View
         style={{
           paddingHorizontal: 20,
           borderRadius: 35,
-          marginBottom: 10
-        }}
-      >
+          marginBottom: 10,
+        }}>
         <View
           style={{
             flexDirection: 'row',
@@ -1072,9 +1185,8 @@ const TalkScreen = ({ navigation, route }) => {
             borderRadius: 35,
             borderWidth: 1,
             borderStyle: 'solid',
-            borderColor: '#E3E3E3'
-          }}
-        >
+            borderColor: '#E3E3E3',
+          }}>
           <TouchableOpacity
             activeOpacity={0.8}
             style={{
@@ -1083,21 +1195,19 @@ const TalkScreen = ({ navigation, route }) => {
                 tabIndex === 'first' && index === 0 ? '#4A26F4' : '#fff',
               width: '33%',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
             onPress={async () => {
-              await jumpTo('first')
-              await setTabIndex('first')
-            }}
-          >
+              await jumpTo('first');
+              await setTabIndex('first');
+            }}>
             <Text
               style={{
                 paddingHorizontal: 24,
                 paddingVertical: 12,
                 fontSize: 12,
-                color: tabIndex === 'first' && index === 0 ? '#fff' : '#000'
-              }}
-            >
+                color: tabIndex === 'first' && index === 0 ? '#fff' : '#000',
+              }}>
               자유게시판
             </Text>
           </TouchableOpacity>
@@ -1110,21 +1220,19 @@ const TalkScreen = ({ navigation, route }) => {
                 tabIndex === 'second' || index === 1 ? '#4A26F4' : '#fff',
               width: '33%',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
             onPress={async () => {
-              await jumpTo('second')
-              await setTabIndex('second')
-            }}
-          >
+              await jumpTo('second');
+              await setTabIndex('second');
+            }}>
             <Text
               style={{
                 paddingHorizontal: 24,
                 paddingVertical: 12,
                 fontSize: 12,
-                color: tabIndex === 'second' || index === 1 ? '#fff' : '#000'
-              }}
-            >
+                color: tabIndex === 'second' || index === 1 ? '#fff' : '#000',
+              }}>
               질문있어요
             </Text>
           </TouchableOpacity>
@@ -1137,31 +1245,29 @@ const TalkScreen = ({ navigation, route }) => {
                 tabIndex === 'third' || index === 2 ? '#4A26F4' : '#fff',
               width: '33%',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
             }}
             onPress={async () => {
-              await jumpTo('third')
-              await setTabIndex('third')
-            }}
-          >
+              await jumpTo('third');
+              await setTabIndex('third');
+            }}>
             <Text
               style={{
                 paddingVertical: 12,
                 fontSize: 12,
-                color: tabIndex === 'third' || index === 2 ? '#fff' : '#000'
-              }}
-            >
+                color: tabIndex === 'third' || index === 2 ? '#fff' : '#000',
+              }}>
               여행후기
             </Text>
           </TouchableOpacity>
         </View>
       </View>
-    )
+    );
   };
 
-  const routeName = route.name
+  const routeName = route.name;
 
-  const [tabIndex, setTabIndex] = useState('first')
+  const [tabIndex, setTabIndex] = useState('first');
 
   return (
     <>
@@ -1178,7 +1284,7 @@ const TalkScreen = ({ navigation, route }) => {
               onIndexChange={setIndex}
             />
           )}
-          navigationState={{ index, routes }}
+          navigationState={{index, routes}}
           renderScene={renderScene}
           onIndexChange={setIndex}
           initialLayout={initialLayout}
@@ -1196,14 +1302,14 @@ const TalkScreen = ({ navigation, route }) => {
                     [
                       {
                         text: '로그인하기',
-                        onPress: () => navigation.navigate('login')
+                        onPress: () => navigation.navigate('login'),
                       },
-                      { text: '취소' }
-                    ]
+                      {text: '취소'},
+                    ],
                   )
                 : navigation.navigate('TalkFaq', {
-                  title: '베가스톡톡'
-                })
+                    title: '베가스톡톡',
+                  });
             }}
             style={{
               position: 'absolute',
@@ -1217,9 +1323,8 @@ const TalkScreen = ({ navigation, route }) => {
               width: 60,
               height: 60,
               backgroundColor: '#4A26F4',
-              borderRadius: 30
-            }}
-          >
+              borderRadius: 30,
+            }}>
             {/* <Image
               source={require('../src/assets/img/write_btn.png')}
               resizeMode='contain'
@@ -1230,15 +1335,15 @@ const TalkScreen = ({ navigation, route }) => {
             /> */}
             <Image
               source={require('../src/assets/img/ic_write.png')}
-              resizeMode='contain'
-              style={{ width: 30, height: 55 }}
+              resizeMode="contain"
+              style={{width: 30, height: 55}}
             />
           </TouchableOpacity>
         </View>
       </Container>
       <BottomTabs navigation={navigation} routeName={routeName} />
     </>
-  )
+  );
 };
 
 const styles = StyleSheet.create({
@@ -1248,8 +1353,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginRight: 20,
     borderWidth: 1,
-    borderColor: '#eee'
-  }
-})
+    borderColor: '#eee',
+  },
+});
 
-export default TalkScreen
+export default TalkScreen;

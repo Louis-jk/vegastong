@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,104 +9,148 @@ import {
   ImageBackground,
   Button,
   Alert,
-  Linking
-} from 'react-native'
-import { Container, Content, Thumbnail, Textarea, Form } from 'native-base'
-import Modal from 'react-native-modal'
-import { useSelector } from 'react-redux'
-import StarRating from 'react-native-star-rating'
-import { WebView } from 'react-native-webview'
-import qs from 'qs'
-import Swiper from 'react-native-swiper'
+  Linking,
+} from 'react-native';
+import {Container, Content, Thumbnail, Textarea, Form} from 'native-base';
+import Modal from 'react-native-modal';
+import {useSelector} from 'react-redux';
+import StarRating from 'react-native-star-rating';
+import {WebView} from 'react-native-webview';
+import qs from 'qs';
+import Swiper from 'react-native-swiper';
 
-import Config from 'react-native-config'
-import { showLocation, Popup } from 'react-native-map-link'
+import Config from 'react-native-config';
+import {showLocation, Popup} from 'react-native-map-link';
 
-import ScrapButton from '../Common/ScrapButton'
-import ReplyCount from '../Common/ReplyCount'
-import ReplyForm from '../Common/ReplyForm'
-import Reply from '../Reply'
-import Header from '../Common/Header'
-import { VegasGet, VegasPost } from '../../utils/axios.config'
+import ScrapButton from '../Common/ScrapButton';
+import ReplyCount from '../Common/ReplyCount';
+import ReplyForm from '../Common/ReplyForm';
+import Reply from '../Reply';
+import Header from '../Common/Header';
+import {VegasGet, VegasPost} from '../../utils/axios.config';
 
-const BASE_URL = Config.BASE_URL
+const BASE_URL = Config.BASE_URL;
 
 const Detail = (props) => {
-  const navigation = props.navigation
-  const id = props.route.params.id
-  const { width, height } = Dimensions.get('window')
-  const token = useSelector((state) => state.Reducer.token)
+  const navigation = props.navigation;
+  const id = props.route.params.id;
+  const {width, height} = Dimensions.get('window');
+  const token = useSelector((state) => state.Reducer.token);
   const userNickName = useSelector(
-    (state) => state.UserInfoReducer.ut_nickname
-  )
+    (state) => state.UserInfoReducer.ut_nickname,
+  );
 
-  const [scrap, setScrap] = useState(false)
-  const [isModalVisible, setModalVisible] = useState(false)
+  const [scrap, setScrap] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   // const curImg = route.params.props.image;
   // const curTitle = route.params.props.title;
   // const curAvatarProfile = route.params.props.avatar.profile;
   // const curAvatarName = route.params.props.avatar.name;
-  const [tripDetail, setTripDetail] = useState([])
-  const [tripDetailFiles, setTripDetailFiles] = useState([])
-  const [tripDetailContent, setTripDetailContent] = useState([])
-  const [tripStars, setTripStars] = useState(0)
-  const [myTripStar, setMyTripStar] = useState(0)
-  const [benefit, setBenefit] = useState(null)
+  const [tripDetail, setTripDetail] = useState([]);
+  const [tripDetailFiles, setTripDetailFiles] = useState([]);
+  const [tripDetailContent, setTripDetailContent] = useState([]);
+  const [tripStars, setTripStars] = useState(0);
+  const [myTripStar, setMyTripStar] = useState(0);
+  const [benefit, setBenefit] = useState(null);
 
-  const toggleModal = () => setModalVisible(!isModalVisible)
+  const toggleModal = () => setModalVisible(!isModalVisible);
 
   const getApi = () => {
-    VegasGet(`/api/trip/get_trip/${id}`, { headers: { authorization: `${token}` } })
+    VegasGet(`/api/trip/get_trip/${id}`, {headers: {authorization: `${token}`}})
       .then((res) => {
-        console.log('trip res : ', res)
+        console.log('trip res : ', res);
         if (res.result === 'success') {
-          setTripDetail(res.data)
-          setTripDetailFiles(res.data.files)
-          setTripDetailContent(JSON.parse(res.data.tr_content))
+          setTripDetail(res.data);
+          setTripDetailFiles(res.data.files);
+          setTripDetailContent(JSON.parse(res.data.tr_content));
 
           if (res.data.tr_stars) {
-            setTripStars(res.data.tr_stars)
+            setTripStars(res.data.tr_stars);
           } else {
-            setTripStars(0)
+            setTripStars(0);
           }
 
           if (res.data.my_star && res.data.my_star.st_star) {
-            setMyTripStar(res.data.my_star.st_star)
+            setMyTripStar(res.data.my_star.st_star);
           } else {
-            setMyTripStar(0)
+            setMyTripStar(0);
           }
 
-          setBenefit(res.data.tr_benefit)
+          setBenefit(res.data.tr_benefit);
         } else {
           Alert.alert('잘못된 경로입니다.', '경로를 확인해주세요.', [
-            { text: '확인', onPress: () => navigation.navigate('home') }
-          ])
+            {text: '확인', onPress: () => navigation.navigate('home')},
+          ]);
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
   };
 
-  console.log('setTripDetail : ', tripDetail)
-  console.log('benefit : ', benefit)
+  console.log('setTripDetail : ', tripDetail);
+  console.log('benefit : ', benefit);
 
   // 해당 페이지 전체 댓글 불러오기
-  const [replyLists, setReplyLists] = useState([])
+  const [replyLists, setReplyLists] = useState([]);
   const getReplyAPI = () => {
     VegasGet(`/api/word/get_words?wo_category=trip&wo_ref_id=${id}&page=1`)
       .then((res) => {
-        console.log('Trip get Reply : ', res)
+        console.log('Trip get Reply : ', res);
         if (res.result === 'success') {
-          setReplyLists(res.data)
+          setReplyLists(res.data);
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
+  };
+
+  // 광고 배너 불러오기
+  const [banner, setBanner] = useState(null);
+  const getBannerAPI = () => {
+    if (
+      tripDetail.tr_category === 'downtown' ||
+      tripDetail.tr_category === 'tour' ||
+      tripDetail.tr_category === 'hotel'
+    ) {
+      let selectBanner = '';
+
+      if (tripDetail.tr_category === 'downtown') {
+        selectBanner = 'banner3';
+      }
+      if (tripDetail.tr_category === 'tour') {
+        selectBanner = 'banner4';
+      }
+      if (tripDetail.tr_category === 'hotel') {
+        selectBanner = 'banner5';
+      }
+
+      VegasGet(`/api/banner/get_location_banners/${selectBanner}`, {
+        headers: {authorization: `${token}`},
+      })
+        .then((res) => {
+          if (res.result === 'success') {
+            console.log('banner ?', res);
+            // setCurationLists(res.data)
+            setBanner(res.data[0]);
+          }
+        })
+        .catch((err) => console.log(err));
+    } else {
+      return false;
+    }
   };
 
   useEffect(() => {
-    getApi()
-    getReplyAPI()
-  }, [])
+    getApi();
+    getReplyAPI();
+  }, []);
+
+  useEffect(() => {
+    if (tripDetail) {
+      getBannerAPI();
+
+      return () => getBannerAPI();
+    }
+  }, [tripDetail]);
 
   const toggleScrap = () => {
     if (tripDetail.my_scrap === 0 || tripDetail.my_scrap === null) {
@@ -114,38 +158,38 @@ const Detail = (props) => {
         '/api/user/add_scrap',
         qs.stringify({
           sc_category: 'trip',
-          sc_ref_id: id
+          sc_ref_id: id,
         }),
-        { headers: { authorization: `${token}` } }
+        {headers: {authorization: `${token}`}},
       )
         .then((res) => {
-          console.log('스크랩 기능 추가 값 : ', res)
+          console.log('스크랩 기능 추가 값 : ', res);
           if (res.result === 'success') {
-            getApi()
+            getApi();
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => console.log(err));
     } else if (tripDetail.my_scrap !== 0 || tripDetail.my_scrap !== null) {
       VegasPost(
         `/api/user/remove_scrap/${tripDetail.my_scrap.sc_id}`,
         {},
-        { headers: { authorization: `${token}` } }
+        {headers: {authorization: `${token}`}},
       )
         .then((res) => {
-          console.log('Remove Scrap : ', res)
+          console.log('Remove Scrap : ', res);
           if (res.result === 'success') {
-            getApi()
+            getApi();
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => console.log(err));
     } else {
-      return false
+      return false;
     }
-  }
+  };
 
   const DelOK = (e) => {
     VegasGet(`/api/word/remove_word/${e}`, {
-      headers: { authorization: `${token}` }
+      headers: {authorization: `${token}`},
     })
       .then((res) => {
         if (res.result === 'success') {
@@ -156,19 +200,19 @@ const Detail = (props) => {
               {
                 text: '머무르기',
                 onPress: () => {
-                  getApi()
-                  getReplyAPI()
-                }
+                  getApi();
+                  getReplyAPI();
+                },
               },
               {
                 text: '나가기',
-                onPress: () => navigation.navigate('home')
-              }
-            ]
-          )
+                onPress: () => navigation.navigate('home'),
+              },
+            ],
+          );
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
   };
 
   const ReplyDel = (e) => {
@@ -176,10 +220,10 @@ const Detail = (props) => {
       '댓글을 정말 삭제하시겠습니까?',
       '삭제된 댓글은 복원되지 않습니다.',
       [
-        { text: '삭제', onPress: () => DelOK(e) },
-        { text: '취소', onPress: () => {} }
-      ]
-    )
+        {text: '삭제', onPress: () => DelOK(e)},
+        {text: '취소', onPress: () => {}},
+      ],
+    );
   };
 
   // 별점 주기
@@ -188,62 +232,62 @@ const Detail = (props) => {
       '/api/trip/update_star',
       qs.stringify({
         st_trip_id: id,
-        st_star: rating
+        st_star: rating,
       }),
-      { headers: { authorization: `${token}` } }
+      {headers: {authorization: `${token}`}},
     )
       .then((res) => {
-        console.log('trip star result : ', res)
+        console.log('trip star result : ', res);
         if (res.result === 'success') {
-          setStarCount(res.data)
+          setStarCount(res.data);
           Alert.alert(
             '소중한 평가 감사드립니다.',
             '이 페이지에 머무르시겠습니까?',
             [
               {
                 text: '머무르기',
-                onPress: () => getApi()
+                onPress: () => getApi(),
               },
               {
                 text: '나가기',
-                onPress: () => navigation.navigate('trip')
-              }
-            ]
-          )
+                onPress: () => navigation.navigate('trip'),
+              },
+            ],
+          );
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
   };
 
-  const [starCount, setStarCount] = useState(1)
+  const [starCount, setStarCount] = useState(1);
   const onStarRatingPress = (rating) => {
-    setStarCount(rating)
+    setStarCount(rating);
     Alert.alert(
       `별 ${rating}개를 전송하시겠습니까?`,
       '전송시 수정을 할 수 없습니다.',
       [
         {
           text: '전송',
-          onPress: () => sendRating(rating)
+          onPress: () => sendRating(rating),
         },
         {
           text: '취소',
-          onPress: () => {}
-        }
-      ]
-    )
+          onPress: () => {},
+        },
+      ],
+    );
   };
 
-  console.log('tripDetail : ', tripDetail)
+  console.log('tripDetail : ', tripDetail);
 
-  let myWebView
+  let myWebView;
   const selectLocal = () => {
     // this.webview.postMessage('store');
-    myWebView.postMessage('button')
+    myWebView.postMessage('button');
   };
 
   // 위치공유
-  const [isLocatePopup, setLocatePopup] = useState(false)
+  const [isLocatePopup, setLocatePopup] = useState(false);
   const goToLocation = () => {
     showLocation({
       latitude: tripDetail.tr_lat,
@@ -258,21 +302,21 @@ const Detail = (props) => {
       dialogMessage: '사용하실 지도 앱을 선택해주세요.', // optional (default: 'What app would you like to use?')
       cancelText: '취소', // optional (default: 'Cancel')
       appsWhiteList: ['google-maps', 'kakaomap', 'navermap'], // optionally you can set which apps to show (default: will show all supported apps installed on device)
-      naverCallerName: 'com.dmonster.dmonster1427' // to link into Naver Map You should provide your appname which is the bundle ID in iOS and applicationId in android.
+      naverCallerName: 'com.dmonster.dmonster1427', // to link into Naver Map You should provide your appname which is the bundle ID in iOS and applicationId in android.
       // appTitles: {
       //   'google-maps': '구글지도',
       //   kakaomap: '카카오맵',
       //   navermap: '네이버지도',
       // }, // optionally you can override default app titles
       // app: 'kakaomap', // optionally specify specific app to use
-    })
+    });
   };
 
   return (
     <Container>
       {/* 모달 설정 */}
-      <Modal isVisible={isModalVisible} animationIn='fadeIn'>
-        <View style={{ flex: 1 }}>
+      <Modal isVisible={isModalVisible} animationIn="fadeIn">
+        <View style={{flex: 1}}>
           {/* 모달 전체 레이아웃 */}
 
           <View
@@ -280,22 +324,20 @@ const Detail = (props) => {
               backgroundColor: 'transparent',
               borderRadius: 15,
               marginHorizontal: 10,
-              marginTop: 100
-            }}
-          >
+              marginTop: 100,
+            }}>
             <View
               style={{
                 justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
+                alignItems: 'center',
+              }}>
               <Image
                 source={require('../src/assets/img/event_top.png')}
-                resizeMode='contain'
+                resizeMode="contain"
                 style={{
                   width: 200,
                   height: 100,
-                  backgroundColor: 'transparent'
+                  backgroundColor: 'transparent',
                 }}
               />
             </View>
@@ -305,27 +347,24 @@ const Detail = (props) => {
                 backgroundColor: '#E8EBFF',
                 borderTopRightRadius: 15,
                 borderTopLeftRadius: 15,
-                paddingVertical: 25
-              }}
-            >
+                paddingVertical: 25,
+              }}>
               <Text
                 style={{
                   textAlign: 'center',
                   fontSize: 26,
                   color: '#4A26F4',
                   letterSpacing: -2,
-                  marginBottom: 2
-                }}
-              >
+                  marginBottom: 2,
+                }}>
                 혜택 내용
               </Text>
               <Text
                 style={{
                   textAlign: 'center',
                   fontSize: 16,
-                  color: '#4A26F4'
-                }}
-              >
+                  color: '#4A26F4',
+                }}>
                 다양한 혜택을 누리세요
               </Text>
             </View>
@@ -339,17 +378,15 @@ const Detail = (props) => {
                 paddingVertical: 20,
                 paddingHorizontal: 20,
                 borderBottomLeftRadius: 15,
-                borderBottomRightRadius: 15
-              }}
-            >
+                borderBottomRightRadius: 15,
+              }}>
               <Text
                 style={{
                   fontSize: 16,
                   textAlign: 'center',
                   lineHeight: 22,
-                  marginVertical: 20
-                }}
-              >
+                  marginVertical: 20,
+                }}>
                 {tripDetail.tr_benefit
                   ? tripDetail.tr_benefit
                   : '현재 혜택을 준비중입니다.'}
@@ -361,7 +398,7 @@ const Detail = (props) => {
                   width: '100%',
                   height: 1,
                   backgroundColor: '#F8F8F8',
-                  marginVertical: 20
+                  marginVertical: 20,
                 }}
               />
               <View
@@ -369,49 +406,44 @@ const Detail = (props) => {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  width: '100%'
-                }}
-              >
+                  width: '100%',
+                }}>
                 <TouchableOpacity
                   onPress={() => {
-                    setModalVisible(toggleModal)
+                    setModalVisible(toggleModal);
                   }}
                   style={{
                     borderWidth: 1,
                     borderColor: '#666666',
                     borderStyle: 'solid',
-                    borderRadius: 10
-                  }}
-                >
+                    borderRadius: 10,
+                  }}>
                   <Text
                     style={{
                       textAlign: 'center',
                       paddingHorizontal: 37,
-                      paddingVertical: 15
-                    }}
-                  >
+                      paddingVertical: 15,
+                    }}>
                     닫기
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    setModalVisible(toggleModal)
+                    setModalVisible(toggleModal);
                   }}
                   style={{
                     backgroundColor: '#4A26F4',
                     borderWidth: 1,
                     borderColor: '#4A26F4',
-                    borderRadius: 10
-                  }}
-                >
+                    borderRadius: 10,
+                  }}>
                   <Text
                     style={{
                       color: '#fff',
                       textAlign: 'center',
                       paddingHorizontal: 60,
-                      paddingVertical: 15
-                    }}
-                  >
+                      paddingVertical: 15,
+                    }}>
                     확인
                   </Text>
                 </TouchableOpacity>
@@ -432,7 +464,7 @@ const Detail = (props) => {
         onBackButtonPressed={() => setLocatePopup(false)}
         modalProps={{
           // you can put all react-native-modal props inside.
-          animationIn: 'slideInUp'
+          animationIn: 'slideInUp',
         }}
         appsWhiteList={['google-maps', 'kakaomap']}
         // appTitles: {{ /* Optional: you can override app titles. */ }}
@@ -449,7 +481,7 @@ const Detail = (props) => {
           dialogMessage: '사용하실 지도 앱을 선택해주세요.', // optional (default: 'What app would you like to use?')
           cancelText: '취소', // optional (default: 'Cancel')
           appsWhiteList: ['apple-maps', 'google-maps', 'kakaomap', 'navermap'], // optionally you can set which apps to show (default: will show all supported apps installed on device)
-          naverCallerName: 'com.dmonster.dmonster1427' // to link into Naver Map You should provide your appname which is the bundle ID in iOS and applicationId in android.
+          naverCallerName: 'com.dmonster.dmonster1427', // to link into Naver Map You should provide your appname which is the bundle ID in iOS and applicationId in android.
           // appTitles: {
           //   'google-maps': '구글지도',
           //   kakaomap: '카카오맵',
@@ -458,36 +490,35 @@ const Detail = (props) => {
           // app: 'kakaomap', // optionally specify specific app to use
         }}
         style={{
-          titleText: { fontSize: 22, fontWeight: 'bold' },
-          subtitleText: { fontSize: 16, color: '#666666' },
-          cancelButtonText: { fontSize: 16, color: '#666666' }
+          titleText: {fontSize: 22, fontWeight: 'bold'},
+          subtitleText: {fontSize: 16, color: '#666666'},
+          cancelButtonText: {fontSize: 16, color: '#666666'},
         }}
       />
-      <Header navigation={navigation} title='베가스여행' />
+      <Header navigation={navigation} title="베가스여행" />
 
-      <ScrollView style={{ backgroundColor: '#fff' }}>
-        <View style={{ position: 'relative' }}>
+      <ScrollView style={{backgroundColor: '#fff'}}>
+        <View style={{position: 'relative'}}>
           {tripDetailFiles.length > 1 ? (
             <Swiper
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',
-                height: height / 2.5
+                height: height / 2.5,
               }}
-              dotColor='#rgba(255,255,255,0.7)'
-              activeDotColor='#4A26F4'
-            >
+              dotColor="#rgba(255,255,255,0.7)"
+              activeDotColor="#4A26F4">
               {tripDetailFiles.map((file) => (
                 <Image
                   key={file.ft_id}
-                  source={{ uri: `${BASE_URL}/${file.ft_file_path}` }}
-                  resizeMode='cover'
+                  source={{uri: `${BASE_URL}/${file.ft_file_path}`}}
+                  resizeMode="cover"
                   style={{
                     width: width,
                     height: height / 2.5,
                     borderBottomLeftRadius: 20,
                     borderBottomRightRadius: 20,
-                    alignSelf: 'center'
+                    alignSelf: 'center',
                   }}
                 />
               ))}
@@ -495,32 +526,31 @@ const Detail = (props) => {
           ) : tripDetailFiles.length == 1 ? (
             <Image
               source={{
-                uri: `${BASE_URL}/${tripDetailFiles[0].ft_file_path}`
+                uri: `${BASE_URL}/${tripDetailFiles[0].ft_file_path}`,
               }}
-              resizeMode='cover'
+              resizeMode="cover"
               style={{
                 width: width,
                 height: height / 2.5,
-                alignSelf: 'center'
+                alignSelf: 'center',
               }}
             />
           ) : null}
         </View>
-        <Content style={{ paddingHorizontal: 20 }}>
+        <Content style={{paddingHorizontal: 20}}>
           <Text
             style={{
               fontSize: 22,
               fontWeight: 'bold',
-              marginVertical: 20
-            }}
-          >
+              marginVertical: 20,
+            }}>
             {tripDetail.tr_name}
           </Text>
 
           <View
             style={{
               borderBottomColor: '#EFEFEF',
-              borderBottomWidth: 1
+              borderBottomWidth: 1,
             }}
           />
           <View
@@ -529,9 +559,8 @@ const Detail = (props) => {
               justifyContent: 'flex-start',
               alignItems: 'flex-start',
               width: '100%',
-              paddingVertical: 10
-            }}
-          >
+              paddingVertical: 10,
+            }}>
             <Text
               style={{
                 backgroundColor: '#4A26F4',
@@ -540,9 +569,8 @@ const Detail = (props) => {
                 borderRadius: 10,
                 color: '#fff',
                 fontSize: 10,
-                marginRight: 10
-              }}
-            >
+                marginRight: 10,
+              }}>
               주소
             </Text>
             <View
@@ -550,71 +578,65 @@ const Detail = (props) => {
                 display: 'flex',
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                width: '87%'
-              }}
-            >
-              <Text textBreakStrategy='simple'>{tripDetail.tr_address}</Text>
+                width: '87%',
+              }}>
+              <Text textBreakStrategy="simple">{tripDetail.tr_address}</Text>
             </View>
           </View>
           <View
             style={{
               borderBottomColor: '#EFEFEF',
-              borderBottomWidth: 1
+              borderBottomWidth: 1,
             }}
           />
-          <View style={{ marginVertical: 15 }}>
+          <View style={{marginVertical: 15}}>
             {tripDetailContent.length !== 0
               ? tripDetailContent.map((tc, idx) => (
-                <View style={{ marginVertical: 7 }} key={`${tc.title}-${idx}`}>
+                  <View style={{marginVertical: 7}} key={`${tc.title}-${idx}`}>
                     <Text
                       style={{
                         fontSize: 16,
                         fontWeight: 'bold',
                         color: '#4A26F4',
-                        marginBottom: 7
-                      }}
-                    >
+                        marginBottom: 7,
+                      }}>
                       {tc.title}
                     </Text>
                     {tc.title === '웹사이트' ? (
                       <TouchableOpacity
                         onPress={() => {
-                          Linking.openURL(tc.content)
+                          Linking.openURL(tc.content);
                           // if (tc.content.startsWith('https://')) {
                           //   Linking.openURL(`${tc.content}`)
                           // } else {
                           //   Linking.openURL(`https://${tc.content}`)
                           // }
-                        }}
-                      >
+                        }}>
                         <Text
                           style={{
                             fontSize: 16,
                             lineHeight: 23,
                             color: '#000',
-                            textDecorationLine: 'underline'
-                          }}
-                        >
+                            textDecorationLine: 'underline',
+                          }}>
                           {tc.content}
                         </Text>
                       </TouchableOpacity>
                     ) : tc.title === '전화번호' ? (
                       <TouchableOpacity
-                        onPress={() => Linking.openURL(`tel:+1${tc.content}`)}
-                      >
+                        onPress={() => Linking.openURL(`tel:+1${tc.content}`)}>
                         <Text
                           style={{
                             fontSize: 16,
                             lineHeight: 23,
                             color: '#000',
-                            textDecorationLine: 'underline'
-                          }}
-                        >
+                            textDecorationLine: 'underline',
+                          }}>
                           {tc.content}
                         </Text>
                       </TouchableOpacity>
                     ) : (
-                      <Text style={{ fontSize: 16, lineHeight: 23 }}>
+                      <Text style={{fontSize: 16, lineHeight: 23}}>
                         {tc.content}
                       </Text>
                     )}
@@ -625,7 +647,7 @@ const Detail = (props) => {
           <View
             style={{
               borderBottomColor: '#EFEFEF',
-              borderBottomWidth: 1
+              borderBottomWidth: 1,
             }}
           />
           <View
@@ -633,29 +655,26 @@ const Detail = (props) => {
               marginBottom: 10,
               flexDirection: 'row',
               justifyContent: 'space-around',
-              paddingVertical: 30
-            }}
-          >
+              paddingVertical: 30,
+            }}>
             <TouchableOpacity
               onPress={() => setLocatePopup(true)}
-              style={{ justifyContent: 'center', alignItems: 'center' }}
-            >
+              style={{justifyContent: 'center', alignItems: 'center'}}>
               <Image
                 source={require('../src/assets/img/ic_map.png')}
-                resizeMode='contain'
-                style={{ width: 50, height: 50, marginBottom: 10 }}
+                resizeMode="contain"
+                style={{width: 50, height: 50, marginBottom: 10}}
               />
               <Text>위치공유</Text>
             </TouchableOpacity>
             {tripDetail.tr_benefit !== '' && tripDetail.tr_benefit !== null && (
               <TouchableOpacity
-                style={{ justifyContent: 'center', alignItems: 'center' }}
-                onPress={toggleModal}
-              >
+                style={{justifyContent: 'center', alignItems: 'center'}}
+                onPress={toggleModal}>
                 <Image
                   source={require('../src/assets/img/ic_benefit.png')}
-                  resizeMode='contain'
-                  style={{ width: 50, height: 50, marginBottom: 10 }}
+                  resizeMode="contain"
+                  style={{width: 50, height: 50, marginBottom: 10}}
                 />
                 <Text>혜택</Text>
               </TouchableOpacity>
@@ -663,16 +682,16 @@ const Detail = (props) => {
           </View>
         </Content>
         <Content>
-          <View style={{ position: 'relative', width: width, marginBottom: 30 }}>
+          <View style={{position: 'relative', width: width, marginBottom: 30}}>
             <ImageBackground
               source={require('../src/assets/img/text_bg.png')}
-              resizeMode='center'
+              resizeMode="center"
               style={{
                 backgroundColor: 'transparent',
                 width: width,
                 height: 135,
                 borderBottomLeftRadius: 60,
-                borderTopLeftRadius: 60
+                borderTopLeftRadius: 60,
               }}
             />
             <Text
@@ -685,9 +704,8 @@ const Detail = (props) => {
                 fontWeight: 'bold',
                 color: '#1B0488',
                 textAlign: 'right',
-                lineHeight: 26
-              }}
-            >
+                lineHeight: 26,
+              }}>
               {tripDetail.tr_message}
             </Text>
           </View>
@@ -701,24 +719,22 @@ const Detail = (props) => {
         ) : null}
         <View>
           {token ? (
-            <View style={{ marginTop: 30, marginBottom: 20 }}>
+            <View style={{marginTop: 30, marginBottom: 20}}>
               <Text
-                style={{ fontSize: 18, textAlign: 'center', color: '#A0A0A0' }}
-              >
+                style={{fontSize: 18, textAlign: 'center', color: '#A0A0A0'}}>
                 {myTripStar >= 4
                   ? `${userNickName}님, 별 ${myTripStar}개 감사합니다!`
                   : myTripStar >= 1 && myTripStar < 4
-                    ? `${userNickName}님, 별 ${myTripStar}개! 더욱 더 노력하겠습니다.`
-                    : '이 장소에 대한 평가를 해주세요.'}
+                  ? `${userNickName}님, 별 ${myTripStar}개! 더욱 더 노력하겠습니다.`
+                  : '이 장소에 대한 평가를 해주세요.'}
               </Text>
 
               <View
                 style={{
                   flexDirection: 'row',
                   justifyContent: 'center',
-                  marginTop: 10
-                }}
-              >
+                  marginTop: 10,
+                }}>
                 <StarRating
                   disabled={false}
                   emptyStar={require('../src/assets/img/star_off.png')}
@@ -728,7 +744,7 @@ const Detail = (props) => {
                   selectedStar={
                     myTripStar
                       ? () => {
-                          return false
+                          return false;
                         }
                       : (rating) => onStarRatingPress(rating)
                   }
@@ -738,11 +754,11 @@ const Detail = (props) => {
             </View>
           ) : null}
         </View>
-        <View style={{ paddingHorizontal: 20 }}>
+        <View style={{paddingHorizontal: 20}}>
           {token ? (
             <ReplyForm
               wo_ref_id={id}
-              wo_category='trip'
+              wo_category="trip"
               navigation={navigation}
               getReplyAPI={getReplyAPI}
               getApi={getApi}
@@ -753,33 +769,30 @@ const Detail = (props) => {
                 fontSize: 16,
                 color: '#666666',
                 marginTop: 25,
-                textAlign: 'center'
-              }}
-            >
+                textAlign: 'center',
+              }}>
               댓글 작성은 회원만 이용하실 수 있습니다.
             </Text>
           )}
         </View>
 
-        <View style={{ paddingHorizontal: 20, marginTop: 40 }}>
+        <View style={{paddingHorizontal: 20, marginTop: 40}}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              alignItems: 'center'
-            }}
-          >
+              alignItems: 'center',
+            }}>
             <ReplyCount count={tripDetail.wo_count} />
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginBottom: 10
-              }}
-            >
-              <Text style={{ fontSize: 14, paddingRight: 5 }}>평점</Text>
-              <Text style={{ fontSize: 20, paddingRight: 10 }}>
+                marginBottom: 10,
+              }}>
+              <Text style={{fontSize: 14, paddingRight: 5}}>평점</Text>
+              <Text style={{fontSize: 20, paddingRight: 10}}>
                 {!tripStars ? 0 : tripStars}
               </Text>
 
@@ -797,7 +810,7 @@ const Detail = (props) => {
         <View
           style={{
             borderBottomColor: '#EFEFEF',
-            borderBottomWidth: 1
+            borderBottomWidth: 1,
           }}
         />
         <View>
@@ -808,8 +821,28 @@ const Detail = (props) => {
           />
         </View>
       </ScrollView>
+      {banner && (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => Linking.openURL(banner.bn_url)}
+          style={{
+            width: '100%',
+            height: 74,
+            bottom: 0,
+            zIndex: 100,
+            backgroundColor: '#fff',
+          }}>
+          <Image
+            source={{
+              uri: banner.ft_download_url,
+            }}
+            style={{width: '100%', height: '100%'}}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+      )}
     </Container>
-  )
+  );
 };
 
-export default Detail
+export default Detail;
